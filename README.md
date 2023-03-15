@@ -53,6 +53,8 @@ Each device have maximal number of user that are able to connect to device. Also
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
+-TODO 
+
 # Contact
 
 - Wiktor Gut, wiktorgut@student.agh.edu.pl 
