@@ -36,10 +36,10 @@ Each device have maximal number of user that are able to connect to device. Also
     <img src="https://img.shields.io/badge/-CSharp-2E8B57?logo=csharp" />
   </a>
   <a>
-    <img src="https://img.shields.io/badge/-Entity_Framework-FFFFFF?logo=entityframework" />
+    <img src="https://img.shields.io/badge/-Entity_Framework-2E8B57?logo=entityframework" />
   </a>
   <a>
-    <img src="https://img.shields.io/badge/-Oracle-2E8B57?logo=oracle" />
+    <img src="https://img.shields.io/badge/plSQL-F80000?style=for-the-badge&logo=Oracle&logoColor=white&style=flat" />
   </a>
 </div>
 
@@ -47,13 +47,18 @@ Each device have maximal number of user that are able to connect to device. Also
 
 ### Roadmap 
 
-- TODO
+Area| Finished | Approved
+:-: | :-: | :-: 
+Setup | ✅  | ✅ 
+Database Schema | ❌  | ❌ 
+Database Implementation | ❌ | ❌ 
+Backend Technology Connection | ❌ | ❌ 
+
 
 ### License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
--TODO 
 
 # Contact
 
