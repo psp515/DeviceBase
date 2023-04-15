@@ -1,5 +1,4 @@
-﻿
-namespace DeviceBaseApi.Models;
+﻿namespace DeviceBaseApi.Models;
 
 public class Device
 {
