@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DeviceBaseApi.AuthModule;
+using System.ComponentModel.DataAnnotations;
 
 namespace DeviceBaseApi.Models;
 

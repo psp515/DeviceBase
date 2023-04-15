@@ -2,6 +2,6 @@
 
 public class LoginResponseDTO
 {
-    //public string RefreshToken { get; set; }
-    public string AccessToken { get; set; }
+    public UserDTO User { get; set; }
+    public string Token { get; set; }
 }

@@ -1,4 +1,7 @@
-﻿namespace DeviceBaseApi.Models;
+﻿using DeviceBaseApi.AuthModule;
+using System.ComponentModel.DataAnnotations;
+
+namespace DeviceBaseApi.Models;
 
 public class Device
 {

@@ -4,7 +4,7 @@ namespace DeviceBaseApi;
 
 public class RestResponse
 {
-    public RestResponse(string errorMessage = "")
+    public RestResponse(string errorMessage)
     {
         ErrorMessage = errorMessage;
         IsSuccess = false;
@@ -22,10 +22,10 @@ public class RestResponse
         StatusCode = defaultStatus;
     }
 
-    public RestResponse(string errorMessage = "", 
-                        bool isSuccess = false, 
-                        HttpStatusCode defaultStatus = HttpStatusCode.BadRequest,
-                        object result = null)
+    public RestResponse(string errorMessage,
+                        bool isSuccess,
+                        HttpStatusCode defaultStatus,
+                        object result)
     {
         ErrorMessage = errorMessage;
         IsSuccess = isSuccess;
