@@ -1,7 +1,7 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
 
-namespace DeviceBaseApi.Models;
+namespace DeviceBaseApi.DeviceTypeModule;
 
 public class DeviceType
 {

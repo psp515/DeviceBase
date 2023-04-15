@@ -1,23 +1,19 @@
 ﻿using DeviceBaseApi.AuthModule;
+using DeviceBaseApi.DeviceTypeModule;
 using System.ComponentModel.DataAnnotations;
 
-namespace DeviceBaseApi.Models;
+namespace DeviceBaseApi.DeviceModule;
 
 public class Device
 {
     [Key]
     public int DeviceId { get; set; }
-
     public string Url { get; set; }
     public bool IsWorking { get; set; }
-
     public ICollection<User> Users { get; set; } = new List<User>();
-
-    public DeviceType? DeviceType { get; set; }
-
+    public DeviceType DeviceType { get; set; }
     public bool SoftDeleted { get; set; }
-
     public DateTime Edited { get; set; }
-    public long Created{ get; set; }
+    public long Created { get; set; }
 }
 
