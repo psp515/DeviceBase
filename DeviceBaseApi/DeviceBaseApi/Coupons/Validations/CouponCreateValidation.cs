@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using DeviceBaseApi.Models.DTO;
+using DeviceBaseApi.Coupons.DTO;
 
-namespace DeviceBaseApi.Validations;
+namespace DeviceBaseApi.Coupons.Validations;
 
 public class CouponCreateValidation : AbstractValidator<CouponCreateDTO>
 {

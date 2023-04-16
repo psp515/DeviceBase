@@ -1,4 +1,4 @@
-﻿namespace DeviceBaseApi;
+﻿namespace DeviceBaseApi.Interfaces;
 
 public interface IEndpoint
 {

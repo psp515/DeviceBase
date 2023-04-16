@@ -1,9 +1,6 @@
-﻿using DeviceBaseApi;
-using DeviceBaseApi.Models;
-using DeviceBaseApi.Repository.IRepository;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace DeviceBaseApi.Repository;
+namespace DeviceBaseApi.Coupons;
 
 public class CouponRepository : ICouponRepository
 {

@@ -1,4 +1,4 @@
-﻿namespace DeviceBaseApi.Models;
+﻿namespace DeviceBaseApi.Coupons;
 
 public class Coupon
 {

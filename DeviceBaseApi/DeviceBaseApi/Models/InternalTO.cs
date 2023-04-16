@@ -1,6 +1,6 @@
 ﻿using DeviceBaseApi.AuthModule.DTO;
 
-namespace DeviceBaseApi;
+namespace DeviceBaseApi.Models;
 
 public class InternalTO<T> where T : class, new()
 {
@@ -8,7 +8,7 @@ public class InternalTO<T> where T : class, new()
     {
         HasError = true;
         Error = error;
-        Value = default(T);
+        Value = default;
     }
 
     public InternalTO(T value)

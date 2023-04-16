@@ -1,5 +1,6 @@
 ﻿using DeviceBaseApi.AuthModule;
-using DeviceBaseApi.Models;
+using DeviceBaseApi.Coupons;
+using DeviceBaseApi.DeviceModule;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +13,8 @@ public class DataContext : IdentityDbContext<User>
 
     }
 
-    public DbSet<User> Users { get; set; }
+    public DbSet<User> AppUsers { get; set; }
+    public DbSet<Device> Devices { get; set; }
     public DbSet<Coupon> Coupons { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -32,6 +34,29 @@ public class DataContext : IdentityDbContext<User>
                 Name = "20OFF",
                 Percent = 20,
                 IsActive = true,
+            });
+
+
+        modelBuilder.Entity<User>().HasData(
+            new User()
+            {
+                Id = "1TestId",
+                Email = "psp515@wp.pl",
+                UserName = "psp515",
+                PasswordHash = "",
+            });
+
+
+
+        modelBuilder.Entity<Device>().HasData(
+            new Device()
+            {
+                DeviceId = 1,
+                Users = new List<User>(),
+                Created = DateTime.Now,
+                Edited = DateTime.Now,
+                MqttUrl = "https://www.google.pl/",
+                SerialNumber = "1094205034"
             });
     }
 }

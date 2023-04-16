@@ -2,6 +2,8 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using DeviceBaseApi.AuthModule.DTO;
+using DeviceBaseApi.Interfaces;
+using DeviceBaseApi.Models;
 
 namespace DeviceBaseApi.AuthModule;
 

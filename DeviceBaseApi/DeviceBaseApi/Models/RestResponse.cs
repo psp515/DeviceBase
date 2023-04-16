@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace DeviceBaseApi;
+namespace DeviceBaseApi.Models;
 
 public class RestResponse
 {
@@ -34,7 +34,7 @@ public class RestResponse
     }
 
     public bool IsSuccess { get; set; }
-    public Object Result { get; set; }
+    public object Result { get; set; }
     public HttpStatusCode StatusCode { get; set; }
     public string ErrorMessage { get; set; }
 }

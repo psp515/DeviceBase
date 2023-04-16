@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
 using FluentValidation;
-using DeviceBaseApi.Models.DTO;
 using DeviceBaseApi.Models;
-using DeviceBaseApi.Repository.IRepository;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using DeviceBaseApi.Coupons.DTO;
 
-namespace DeviceBaseApi.Endpoints;
+namespace DeviceBaseApi.Coupons;
 
 public static class CouponEndpoints
 {
@@ -35,7 +34,7 @@ public static class CouponEndpoints
 
         app.MapDelete("/api/coupon/{id:int}", DeleteCoupon);
     }
-    
+
     private async static Task<IResult> GetCoupon(ICouponRepository _couponRepo, ILogger<Program> _logger, int id)
     {
         var result = await _couponRepo.GetAsync(id);
@@ -47,7 +46,7 @@ public static class CouponEndpoints
 
         if (_couponRepo.GetAsync(coupon_C_DTO.Name).GetAwaiter().GetResult() != null)
             return Results.BadRequest(new RestResponse("Coupon Name already Exists"));
-        
+
 
         Coupon coupon = _mapper.Map<Coupon>(coupon_C_DTO);
 
@@ -59,13 +58,13 @@ public static class CouponEndpoints
         //return Results.CreatedAtRoute("GetCoupon",new { id=coupon.Id }, couponDTO);
         //return Results.Created($"/api/coupon/{coupon.Id}",coupon);
     }
-   // [Authorize]
+
     private async static Task<IResult> UpdateCoupon(ICouponRepository _couponRepo, IMapper _mapper,
              [FromBody] CouponUpdateDTO coupon_U_DTO)
     {
         RestResponse response = new() { IsSuccess = false, StatusCode = HttpStatusCode.BadRequest };
 
-       
+
         await _couponRepo.UpdateAsync(_mapper.Map<Coupon>(coupon_U_DTO));
         await _couponRepo.SaveAsync();
 
@@ -74,7 +73,7 @@ public static class CouponEndpoints
         response.StatusCode = HttpStatusCode.OK;
         return Results.Ok(response);
     }
-  //  [Authorize]
+
     private async static Task<IResult> DeleteCoupon(ICouponRepository _couponRepo, int id)
     {
         RestResponse response = new() { IsSuccess = false, StatusCode = HttpStatusCode.BadRequest };

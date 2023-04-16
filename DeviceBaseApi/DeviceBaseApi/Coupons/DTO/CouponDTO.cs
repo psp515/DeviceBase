@@ -1,4 +1,4 @@
-﻿namespace DeviceBaseApi.Models.DTO;
+﻿namespace DeviceBaseApi.Coupons.DTO;
 
 public class CouponDTO
 {

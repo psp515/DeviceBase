@@ -1,6 +1,4 @@
-﻿using DeviceBaseApi.Models;
-
-namespace DeviceBaseApi.Repository.IRepository;
+﻿namespace DeviceBaseApi.Coupons;
 
 public interface ICouponRepository
 {

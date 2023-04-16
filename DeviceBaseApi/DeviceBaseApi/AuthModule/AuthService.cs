@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DeviceBaseApi.AuthModule.DTO;
+using DeviceBaseApi.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -9,20 +10,18 @@ using System.Text;
 
 namespace DeviceBaseApi.AuthModule;
 
-public class AuthService : IAuthService
+public class AuthService : BaseService, IAuthService
 {
-    private readonly DataContext _db;
     private readonly IConfiguration _configuration;
-    private readonly IMapper _mapper;
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private string secretKey;
-    public AuthService(DataContext db, IMapper mapper, IConfiguration configuration,
-        UserManager<User> userManager,
-        RoleManager<IdentityRole> roleManager)
+    public AuthService(DataContext db, 
+        IMapper mapper,
+        IConfiguration configuration, 
+        UserManager<User> userManager, 
+        RoleManager<IdentityRole> roleManager) : base(db, mapper)
     {
-        _db = db;
-        _mapper = mapper;
         _configuration = configuration;
         _userManager = userManager;
         _roleManager = roleManager;
@@ -31,13 +30,13 @@ public class AuthService : IAuthService
 
     public async Task<bool> UserExists(string email)
     {
-        var user = await _db.Users.FirstOrDefaultAsync(x => x.Email == email);
+        var user = await db.AppUsers.FirstOrDefaultAsync(x => x.Email == email);
         return user != null;
     }
 
     public async Task<InternalTO<LoginResponseDTO>> Login(LoginRequestDTO request)
     {
-        var user = await _db.Users.FirstOrDefaultAsync(x => x.Email == request.Email);
+        var user = await db.AppUsers.FirstOrDefaultAsync(x => x.Email == request.Email);
 
         if (user == null) 
             return new InternalTO<LoginResponseDTO>("User not found.");
@@ -68,7 +67,7 @@ public class AuthService : IAuthService
 
         LoginResponseDTO loginResponseDTO = new()
         {
-            User = _mapper.Map<UserDTO>(user),
+            User = mapper.Map<UserDTO>(user),
             Token = new JwtSecurityTokenHandler().WriteToken(token)
         };
 
@@ -102,7 +101,7 @@ public class AuthService : IAuthService
 
                 var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == request.Email);
 
-                return new InternalTO<UserDTO>(_mapper.Map<UserDTO>(user));
+                return new InternalTO<UserDTO>(mapper.Map<UserDTO>(user));
             }
 
             return new InternalTO<UserDTO>(result.Errors.FirstOrDefault().Description);

@@ -1,15 +1,14 @@
 using FluentValidation;
 using DeviceBaseApi;
-using DeviceBaseApi.Repository.IRepository;
-using DeviceBaseApi.Repository;
 using Microsoft.EntityFrameworkCore;
-using DeviceBaseApi.Endpoints;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using DeviceBaseApi.AuthModule;
+using DeviceBaseApi.Interfaces;
+using DeviceBaseApi.Coupons;
 
 var builder = WebApplication.CreateBuilder(args);
 
