@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using DeviceBaseApi.AuthModule;
 using DeviceBaseApi.Interfaces;
 using DeviceBaseApi.Coupons;
+using DeviceBaseApi.DeviceModule;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,7 +73,8 @@ builder.Services.AddAuthentication(x =>
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("AdminOnly", policy => policy.RequireRole("admin"));
+    options.AddPolicy(ApplicationPolicies.AdminPolicy, policy => policy.RequireRole(new string[] { ApplicationRoles.Admin }));
+    options.AddPolicy(ApplicationPolicies.CustomerPolicy, policy => policy.RequireRole(new string[] { ApplicationRoles.Admin, ApplicationRoles.AuthorizedUser }));
 });
 
 var app = builder.Build();
@@ -87,7 +89,8 @@ app.UseAuthorization();
 
 var endpoints = new List<IEndpoint>
 {
-    new AuthEndpoints()
+    new AuthEndpoints(),
+    //new DeviceEndpoints()
 };
 
 endpoints.ForEach(endpoint => endpoint.Configure(app));

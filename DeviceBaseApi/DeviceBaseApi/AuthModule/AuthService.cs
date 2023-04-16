@@ -39,7 +39,7 @@ public class AuthService : BaseService, IAuthService
         var user = await db.AppUsers.FirstOrDefaultAsync(x => x.Email == request.Email);
 
         if (user == null) 
-            return new InternalTO<LoginResponseDTO>("User not found.");
+            return new InternalTO<LoginResponseDTO>("AuthorizedUser not found.");
         
 
         bool isValid = await _userManager.CheckPasswordAsync(user, request.Password);
@@ -94,10 +94,10 @@ public class AuthService : BaseService, IAuthService
                 if (!_roleManager.RoleExistsAsync("admin").GetAwaiter().GetResult())
                 {
                     await _roleManager.CreateAsync(new IdentityRole(ApplicationRoles.Admin));
-                    await _roleManager.CreateAsync(new IdentityRole(ApplicationRoles.Customer));
+                    await _roleManager.CreateAsync(new IdentityRole(ApplicationRoles.AuthorizedUser));
                 }
 
-                await _userManager.AddToRoleAsync(newUser, ApplicationRoles.Customer);
+                await _userManager.AddToRoleAsync(newUser, ApplicationRoles.AuthorizedUser);
 
                 var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == request.Email);
 

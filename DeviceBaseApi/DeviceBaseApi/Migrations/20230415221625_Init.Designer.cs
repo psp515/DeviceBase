@@ -25,7 +25,7 @@ namespace DeviceBaseApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("DeviceBaseApi.AuthModule.User", b =>
+            modelBuilder.Entity("DeviceBaseApi.AuthModule.AuthorizedUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -278,7 +278,7 @@ namespace DeviceBaseApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("DeviceBaseApi.AuthModule.User", null)
+                    b.HasOne("DeviceBaseApi.AuthModule.AuthorizedUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -287,7 +287,7 @@ namespace DeviceBaseApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("DeviceBaseApi.AuthModule.User", null)
+                    b.HasOne("DeviceBaseApi.AuthModule.AuthorizedUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -302,7 +302,7 @@ namespace DeviceBaseApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DeviceBaseApi.AuthModule.User", null)
+                    b.HasOne("DeviceBaseApi.AuthModule.AuthorizedUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -311,7 +311,7 @@ namespace DeviceBaseApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("DeviceBaseApi.AuthModule.User", null)
+                    b.HasOne("DeviceBaseApi.AuthModule.AuthorizedUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

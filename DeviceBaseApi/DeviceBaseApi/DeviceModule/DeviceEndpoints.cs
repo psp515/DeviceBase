@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Azure.Core;
+using DeviceBaseApi.Coupons.DTO;
 using DeviceBaseApi.DeviceModule.DTO;
 using DeviceBaseApi.Interfaces;
 using DeviceBaseApi.Models;
@@ -12,19 +14,52 @@ public class DeviceEndpoints : IEndpoint
 {
     public void Configure(WebApplication application)
     {
-        throw new NotImplementedException();
+        application.MapGet("/api/devices", GetDevices)
+            .WithName("GetDevice")
+            .Produces<RestResponse>(200)
+            .Produces(401)
+            .RequireAuthorization();
+
+        application.MapGet("/api/device/{id:int}", GetDevice)
+            .WithName("GetDevices")
+            .Produces<RestResponse>(200)
+            .Produces(401)
+            .RequireAuthorization();
+
+        application.MapGet("/api/device/{id:string}", GetUserDevices)
+            .WithName("GetUserDevices")
+            .Produces<RestResponse>(200)
+            .Produces(401)
+            .RequireAuthorization();
+
+        application.MapPost("/api/device", CreateDevice)
+            .WithName("CreateDevice")
+            .Accepts<CouponCreateDTO>("application/json")
+            .Produces<RestResponse>(201)
+            .Produces(400)
+            .Produces(401)
+            .RequireAuthorization(ApplicationPolicies.AdminPolicy);
+
+        application.MapPut("/api/device/{id:int}", UpdateDevice)
+            .WithName("UpdateDevice")
+            .Accepts<CouponUpdateDTO>("application/json")
+            .Produces<RestResponse>(200)
+            .Produces(400)
+            .Produces(401)
+            .RequireAuthorization();
+
     }
 
     private async Task<IResult> ConnectToDevice(IDeviceService service, ILogger<Program> logger, string id)
     {
-        var result = await de.GetAsync(id);
-        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, result));
+        // result = await de.GetAsync(id);
+        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, null));
     }
 
     private async Task<IResult> DisconnectFromDevice(IDeviceService service, ILogger<Program> logger, string id)
     {
-        var result = await de.GetAsync(id);
-        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, result));
+        //var result = await de.GetAsync(id);
+        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, null));
     }
 
     private async Task<IResult> GetDevice(IDeviceService service, ILogger<Program> logger, int id)
@@ -63,9 +98,8 @@ public class DeviceEndpoints : IEndpoint
         string id,
         [FromBody] DeviceUpdateDTO request)
     {
-
-      
-
+        //TODO check if device exists
+        //TODO chekc if user has device
 
         var validationResult = await validation.ValidateAsync(request);
 
@@ -75,14 +109,25 @@ public class DeviceEndpoints : IEndpoint
         var device = mapper.Map<Device>(request);
         var result = await service.UpdateAsync(device);
 
-        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, result));
+        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, null));
     }
 
-    // ADMIN ONLY
-    private async Task<IResult> CreateDevice(IDeviceService service, IValidator<DeviceUpdateDTO> validation, ILogger<Program> logger, int id)
+    private async Task<IResult> CreateDevice(IDeviceService service, 
+                                IValidator<DeviceCreateDTO> validation,
+                                IMapper mapper,
+                                ILogger<Program> logger,
+                                [FromBody] DeviceCreateDTO request)
     {
-        var result = await de.GetAsync(id);
-        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, result));
+
+        var validationResult = await validation.ValidateAsync(request);
+
+        if (!validationResult.IsValid)
+            return Results.BadRequest(new RestResponse(validationResult.Errors.FirstOrDefault().ErrorMessage));
+
+        var device = mapper.Map<Device>(request);
+        var result = await service.CreateAsync(device);
+
+        return Results.Created($"/api/device/{device.DeviceId}", new RestResponse(HttpStatusCode.Created, true, null));
     }
 
 }

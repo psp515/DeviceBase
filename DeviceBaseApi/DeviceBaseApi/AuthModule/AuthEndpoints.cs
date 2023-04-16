@@ -39,7 +39,7 @@ public class AuthEndpoints : IEndpoint
             return Results.BadRequest(new RestResponse(registerResponse.Error));
         }
 
-        // TODO: User service
+        // TODO: AuthorizedUser service
 
         return Results.Created($"/api/user/{registerResponse.Value.Id}", new RestResponse(HttpStatusCode.Created, true, registerResponse.Value));
     }

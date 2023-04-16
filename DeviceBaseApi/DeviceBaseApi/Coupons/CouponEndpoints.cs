@@ -59,8 +59,9 @@ public static class CouponEndpoints
         //return Results.Created($"/api/coupon/{coupon.Id}",coupon);
     }
 
-    private async static Task<IResult> UpdateCoupon(ICouponRepository _couponRepo, IMapper _mapper,
-             [FromBody] CouponUpdateDTO coupon_U_DTO)
+    private async static Task<IResult> UpdateCoupon(ICouponRepository _couponRepo, 
+                                                    IMapper _mapper,
+                                                    [FromBody] CouponUpdateDTO coupon_U_DTO)
     {
         RestResponse response = new() { IsSuccess = false, StatusCode = HttpStatusCode.BadRequest };
 
