@@ -34,15 +34,15 @@ public class AuthService : BaseService, IAuthService
         return user != null;
     }
 
-    public async Task<InternalTO<LoginResponseDTO>> Login(LoginRequestDTO request)
+    public async Task<InternalTO<LoginResponseDTO>> Login(string email, string password)
     {
-        var user = await db.AppUsers.FirstOrDefaultAsync(x => x.Email == request.Email);
+        var user = await db.AppUsers.FirstOrDefaultAsync(x => x.Email == email);
 
         if (user == null) 
-            return new InternalTO<LoginResponseDTO>("AuthorizedUser not found.");
+            return new InternalTO<LoginResponseDTO>("User not found.");
         
 
-        bool isValid = await _userManager.CheckPasswordAsync(user, request.Password);
+        bool isValid = await _userManager.CheckPasswordAsync(user, password);
 
         if (!isValid) 
             return new InternalTO<LoginResponseDTO>("Invalid password or email.");
@@ -68,38 +68,28 @@ public class AuthService : BaseService, IAuthService
         LoginResponseDTO loginResponseDTO = new()
         {
             User = mapper.Map<UserDTO>(user),
-            Token = new JwtSecurityTokenHandler().WriteToken(token)
+            Token = $"Bearer " + new JwtSecurityTokenHandler().WriteToken(token)
         };
 
         return new InternalTO<LoginResponseDTO>(loginResponseDTO);
     }
 
-    public async Task<InternalTO<UserDTO>> Register(RegisterRequestDTO request)
+    public async Task<InternalTO<UserDTO>> Register(User newUser, string password)
     { 
-        var newUser = new User()
-        {
-            UserName = request.UserName,
-            NormalizedEmail = request.Email.ToUpper(),
-            Email = request.Email,
-        };
 
-        // TODO: create settings
+        // TODO: Setup Settings
 
         try
         {
-            var result = await _userManager.CreateAsync(newUser, request.Password);
+            var result = await _userManager.CreateAsync(newUser, password);
 
             if (result.Succeeded)
             {
-                if (!_roleManager.RoleExistsAsync("admin").GetAwaiter().GetResult())
-                {
-                    await _roleManager.CreateAsync(new IdentityRole(ApplicationRoles.Admin));
-                    await _roleManager.CreateAsync(new IdentityRole(ApplicationRoles.AuthorizedUser));
-                }
+                await ChcekRoles();
 
-                await _userManager.AddToRoleAsync(newUser, ApplicationRoles.AuthorizedUser);
+                await _userManager.AddToRoleAsync(newUser, ApplicationRoles.Admin);
 
-                var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == request.Email);
+                var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == newUser.Email);
 
                 return new InternalTO<UserDTO>(mapper.Map<UserDTO>(user));
             }
@@ -110,5 +100,14 @@ public class AuthService : BaseService, IAuthService
         {
             return new InternalTO<UserDTO>(e.Message);
         }
+    }
+
+    private async Task ChcekRoles() 
+    {
+        if (!await _roleManager.RoleExistsAsync(ApplicationRoles.Admin))
+            await _roleManager.CreateAsync(new IdentityRole(ApplicationRoles.Admin));
+
+        if (!await _roleManager.RoleExistsAsync(ApplicationRoles.AuthorizedUser))
+            await _roleManager.CreateAsync(new IdentityRole(ApplicationRoles.AuthorizedUser));
     }
 }

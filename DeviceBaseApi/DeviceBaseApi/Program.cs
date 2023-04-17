@@ -47,8 +47,6 @@ builder.Services.AddSwaggerGen(option => {
         }
     });
 });
-builder.Services.AddScoped<ICouponRepository, CouponRepository>();
-builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddDbContext<DataContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
@@ -77,6 +75,12 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy(ApplicationPolicies.CustomerPolicy, policy => policy.RequireRole(new string[] { ApplicationRoles.Admin, ApplicationRoles.AuthorizedUser }));
 });
 
+
+builder.Services.AddScoped<ICouponRepository, CouponRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IDeviceService, DeviceService>();
+
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -90,7 +94,7 @@ app.UseAuthorization();
 var endpoints = new List<IEndpoint>
 {
     new AuthEndpoints(),
-    //new DeviceEndpoints()
+    new DeviceEndpoints()
 };
 
 endpoints.ForEach(endpoint => endpoint.Configure(app));
@@ -103,3 +107,5 @@ app.UseHttpsRedirection();
 app.Run();
 
 
+// admin@admin
+// Admin123!

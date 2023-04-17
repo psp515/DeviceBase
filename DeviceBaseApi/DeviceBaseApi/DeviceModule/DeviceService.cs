@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DeviceBaseApi.AuthModule;
 using Microsoft.EntityFrameworkCore;
 
 namespace DeviceBaseApi.DeviceModule;
@@ -10,14 +11,27 @@ public class DeviceService : BaseService, IDeviceService
 
     }
 
-    public Task<bool> ConnectDevice(int deviceId, string userId)
+    public async Task<bool> ConnectDevice(int deviceId, string userId)
     {
-        throw new NotImplementedException();
+        var device = await db.Devices.FirstAsync(x => x.DeviceId == deviceId);
+        var user = await db.Users.FirstAsync(x => x.Id == userId);
+        device.Users.Add((User)user.Clone());
+
+        return true;
     }
 
-    public Task<bool> DisconnectDevice(int deviceId, string userId)
+    public async Task<bool> DisconnectDevice(int deviceId, string userId)
     {
-        throw new NotImplementedException();
+        var device = await db.Devices.FirstAsync(x => x.DeviceId == deviceId);
+        var user = await db.Users.FirstAsync(x => x.Id == userId);
+        device.Users.Remove(user);
+
+        return true;
+    }
+    public async Task<bool> IsUserConnected(string userId, int deviceId)
+    {
+        var device = await db.Devices.FirstAsync(device => device.DeviceId == deviceId);
+        return device.Users.Any(x=>x.Id == userId);
     }
 
 
@@ -41,19 +55,18 @@ public class DeviceService : BaseService, IDeviceService
     }
     public async Task<bool> SaveAsync()
     {
-        try 
-        {
-            await db.SaveChangesAsync();
-            return true;
-        }
-        catch(Exception ex) 
-        {
-            return false;
-        }
+        await db.SaveChangesAsync();
+        return true;
     }
     public async Task<Device> UpdateAsync(Device item)
     {
         var newItem = db.Devices.Update(item);
         return newItem.Entity;
+    }
+
+    public async Task<bool> ExistAsync(int id)
+    {
+        var device = await db.Devices.FirstOrDefaultAsync(x=> x.DeviceId == id);
+        return device != null;
     }
 }

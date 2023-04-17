@@ -1,6 +1,7 @@
 ﻿using DeviceBaseApi.AuthModule;
 using DeviceBaseApi.Coupons;
 using DeviceBaseApi.DeviceModule;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,9 +9,9 @@ namespace DeviceBaseApi;
 
 public class DataContext : IdentityDbContext<User>
 {
+
     public DataContext(DbContextOptions<DataContext> options) : base(options)
     {
-
     }
 
     public DbSet<User> AppUsers { get; set; }
@@ -35,18 +36,6 @@ public class DataContext : IdentityDbContext<User>
                 Percent = 20,
                 IsActive = true,
             });
-
-
-        modelBuilder.Entity<User>().HasData(
-            new User()
-            {
-                Id = "1TestId",
-                Email = "psp515@wp.pl",
-                UserName = "psp515",
-                PasswordHash = "",
-            });
-
-
 
         modelBuilder.Entity<Device>().HasData(
             new Device()
