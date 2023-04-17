@@ -46,14 +46,15 @@ Database is creared with code first approach.
     <img src="https://img.shields.io/badge/-CSharp-2E8B57?logo=csharp" />
   </a>
   <a>
-    <img src="https://img.shields.io/badge/-Entity_Framework-2E8B57?logo=entityframework" />
+    <img src="https://img.shields.io/badge/.NET_Web_API-0089D6?style=for-the-badge&logo=dotnet&logoColor=white&style=flat" />
   </a>
   <a>
-    <img src="https://img.shields.io/badge/plSQL-F80000?style=for-the-badge&logo=Oracle&logoColor=white&style=flat" />
+    <img src="https://img.shields.io/badge/Entity_Framework-0089D6?style=for-the-badge&logo=dotnet&logoColor=white&style=flat" />
+  </a>
+  <a>
+    <img src="https://img.shields.io/badge/TSQL-239120?style=for-the-badge&logo=microsoft-sql-server&logoColor=white&style=flat" />
   </a>
 </div>
-
-
 
 ### Roadmap 
 
