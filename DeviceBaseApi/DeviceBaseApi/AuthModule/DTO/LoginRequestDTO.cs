@@ -1,4 +1,6 @@
-﻿namespace DeviceBaseApi.AuthModule.DTO;
+﻿using static Azure.Core.HttpHeader;
+
+namespace DeviceBaseApi.AuthModule.DTO;
 
 public class LoginRequestDTO
 {

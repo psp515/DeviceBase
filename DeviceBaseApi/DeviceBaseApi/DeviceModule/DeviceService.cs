@@ -15,7 +15,7 @@ public class DeviceService : BaseService, IDeviceService
     {
         var device = await db.Devices.FirstAsync(x => x.DeviceId == deviceId);
         var user = await db.Users.FirstAsync(x => x.Id == userId);
-        device.Users.Add((User)user.Clone());
+        user.Devices.Add(device);
 
         return true;
     }
@@ -30,7 +30,7 @@ public class DeviceService : BaseService, IDeviceService
     }
     public async Task<bool> IsUserConnected(string userId, int deviceId)
     {
-        var device = await db.Devices.FirstAsync(device => device.DeviceId == deviceId);
+        var device = await db.Devices.Include(d => d.Users).FirstAsync(device => device.DeviceId == deviceId);
         return device.Users.Any(x=>x.Id == userId);
     }
 
