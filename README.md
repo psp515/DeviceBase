@@ -1,7 +1,7 @@
 <div align="center">
   
   <h1> Device Base </h1>
-  <p> Device for remote devices. </p>
+  <p> API example for iot devices </p>
   
   <div>
     <a href="">
@@ -29,6 +29,16 @@
 Device base is small databes for variable devices. Users are able to create accounts and connect to devices.
 Each device have maximal number of user that are able to connect to device. Also user is able to store his appliaction settings.
 
+Provided Endpoints:
+- auth - endpoint for authorization and authentication of user - contains base endpoints for logging and registering user - created with use of IdentityUser
+- device - endpoint for managing physical devices - provides methods for 2 roles - user is able to update device and connect / discounnet to device 
+- user [inprogress] - endpoint for basic user request as get information about user some endpoints for admin user might be added
+- devicetype [inprogress] - endpoint describes base properties of device for admin users only 
+- devicecharacteristic [under consiederation] - endpoint might describe posible use cases of the device 
+- deviceschedules [under consiederation] - endpoint might describe device working schedules provided by users.  
+
+Database is creared with code first approach.
+
 ### Built With
 
 <div> 
@@ -50,15 +60,18 @@ Each device have maximal number of user that are able to connect to device. Also
 Area| Finished | Approved
 :-: | :-: | :-: 
 Setup | ✅  | ✅ 
+Auth endpoint | ✅ | 🚧 
+Device endpoint | ✅ | 🚧 
+Device type endpoint | 🚧 | ❌ 
+User endpoint | 🚧 | ❌ 
+Enhancing endpoints | 🚧 | ❌ 
 Database Schema | ❌  | ❌ 
-Database Implementation | ❌ | ❌ 
-Backend Technology Connection | ❌ | ❌ 
+
 
 
 ### License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
-
 
 # Contact
 
