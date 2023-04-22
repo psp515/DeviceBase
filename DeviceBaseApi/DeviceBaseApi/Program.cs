@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using DeviceBaseApi.AuthModule;
 using DeviceBaseApi.Interfaces;
-using DeviceBaseApi.Coupons;
 using DeviceBaseApi.DeviceModule;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -76,7 +75,6 @@ builder.Services.AddAuthorization(options =>
 });
 
 
-builder.Services.AddScoped<ICouponRepository, CouponRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IDeviceService, DeviceService>();
 
@@ -98,9 +96,6 @@ var endpoints = new List<IEndpoint>
 };
 
 endpoints.ForEach(endpoint => endpoint.Configure(app));
-
-//TODO: Delete
-app.ConfigureCouponEndpoints();
 
 app.UseHttpsRedirection();
 

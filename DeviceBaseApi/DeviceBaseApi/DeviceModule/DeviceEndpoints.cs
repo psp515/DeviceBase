@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Azure.Core;
-using DeviceBaseApi.Coupons.DTO;
 using DeviceBaseApi.DeviceModule.DTO;
 using DeviceBaseApi.Interfaces;
 using DeviceBaseApi.Models;
@@ -31,7 +30,7 @@ public class DeviceEndpoints : IEndpoint
 
         application.MapPost("/api/device", CreateDevice)
             .WithName("CreateDevice")
-            .Accepts<CouponCreateDTO>("application/json")
+            .Accepts<DeviceCreateDTO>("application/json")
             .Produces<RestResponse>(201)
             .Produces(400)
             .Produces(401)
