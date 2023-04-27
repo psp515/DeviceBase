@@ -13,18 +13,21 @@ namespace DeviceBaseApi.AuthModule;
 public class AuthService : BaseService, IAuthService
 {
     private readonly IConfiguration _configuration;
+    private readonly IMapper _mapper;
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private string secretKey;
+
     public AuthService(DataContext db, 
         IMapper mapper,
         IConfiguration configuration, 
         UserManager<User> userManager, 
-        RoleManager<IdentityRole> roleManager) : base(db, mapper)
+        RoleManager<IdentityRole> roleManager) : base(db)
     {
         _configuration = configuration;
         _userManager = userManager;
         _roleManager = roleManager;
+        _mapper = mapper;
         secretKey = _configuration.GetValue<string>("ApiSettings:Secret");
     }
 
@@ -67,7 +70,7 @@ public class AuthService : BaseService, IAuthService
 
         LoginResponseDTO loginResponseDTO = new()
         {
-            User = mapper.Map<UserDTO>(user),
+            User = _mapper.Map<UserDTO>(user),
             Token = $"Bearer " + new JwtSecurityTokenHandler().WriteToken(token)
         };
 
@@ -77,7 +80,7 @@ public class AuthService : BaseService, IAuthService
     public async Task<InternalTO<UserDTO>> Register(User newUser, string password)
     { 
 
-        // TODO: Setup Settings
+        // TODO: Setup Settings for user 
 
         try
         {
@@ -91,7 +94,7 @@ public class AuthService : BaseService, IAuthService
 
                 var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == newUser.Email);
 
-                return new InternalTO<UserDTO>(mapper.Map<UserDTO>(user));
+                return new InternalTO<UserDTO>(_mapper.Map<UserDTO>(user));
             }
 
             return new InternalTO<UserDTO>(result.Errors.FirstOrDefault().Description);

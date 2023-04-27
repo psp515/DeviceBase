@@ -42,13 +42,13 @@ public class DeviceEndpoints : IEndpoint
             .WithName("GetDevices")
             .Produces<RestResponse>(200)
             .Produces(401)
-            .RequireAuthorization();
+            .RequireAuthorization(ApplicationPolicies.UserPolicy);
 
         application.MapGet("/api/device/{guid:guid}", GetUserDevices)
             .WithName("GetUserDevices")
             .Produces<RestResponse>(200)
             .Produces(401)
-            .RequireAuthorization();
+            .RequireAuthorization(ApplicationPolicies.UserPolicy);
 
         application.MapPut("/api/device/{guid:guid}", UpdateDevice)
             .WithName("UpdateDevice")
@@ -56,21 +56,21 @@ public class DeviceEndpoints : IEndpoint
             .Produces<RestResponse>(200)
             .Produces(400)
             .Produces(401)
-            .RequireAuthorization();
+            .RequireAuthorization(ApplicationPolicies.UserPolicy);
 
         application.MapPatch("/api/device/{id:int}/connect/{guid:guid}", ConnectDevice)
             .WithName("ConnectDevice")
             .Produces<RestResponse>(200)
             .Produces<string>(400)
             .Produces(401)
-            .RequireAuthorization();
+            .RequireAuthorization(ApplicationPolicies.UserPolicy);
 
         application.MapPatch("/api/device/{id:int}/diconnect/{guid:guid}", DisconnectDevice)
             .WithName("DisconnectDevice")
             .Produces<RestResponse>(200)
             .Produces<string>(400)
             .Produces(401)
-            .RequireAuthorization();
+            .RequireAuthorization(ApplicationPolicies.UserPolicy);
     }
 
     private async Task<IResult> ConnectDevice(IDeviceService service, ILogger<Program> logger, string guid, int id)
@@ -94,8 +94,6 @@ public class DeviceEndpoints : IEndpoint
 
         await service.ConnectDevice(id, guid);
 
-        await service.SaveAsync();
-
         return Results.Ok(new RestResponse(HttpStatusCode.OK, true, null));
     }
 
@@ -107,8 +105,6 @@ public class DeviceEndpoints : IEndpoint
             return Results.BadRequest(new RestResponse("User is connected to this device."));
 
         await service.DisconnectDevice(id, guid);
-
-        await service.SaveAsync();
 
         return Results.Ok(new RestResponse(HttpStatusCode.OK, true, null));
     }
@@ -163,7 +159,6 @@ public class DeviceEndpoints : IEndpoint
         var device = mapper.Map<Device>(request);
 
         await service.UpdateAsync(device);
-        await service.SaveAsync();
 
         return Results.Ok(new RestResponse(HttpStatusCode.OK, true, null));
     }
@@ -182,9 +177,8 @@ public class DeviceEndpoints : IEndpoint
         //TODO: set base fields 
         var device = mapper.Map<Device>(request);
         await service.CreateAsync(device);
-        await service.SaveAsync();
 
-        return Results.Created($"/api/device/{device.DeviceId}", new RestResponse(HttpStatusCode.Created, true, null));
+        return Results.Created($"/api/device/{device.Id}", new RestResponse(HttpStatusCode.Created, true, null));
     }
 
 }

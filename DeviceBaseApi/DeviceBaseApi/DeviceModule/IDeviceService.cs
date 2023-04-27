@@ -2,7 +2,7 @@
 
 namespace DeviceBaseApi.DeviceModule;
 
-public interface IDeviceService : IGetAsync<Device, int>, IUpdateAsync<Device, int>, ICreateAsync<Device>
+public interface IDeviceService : IGetAsync<Device>, IUpdateAsync<Device>, ICreateAsync<Device>
 {
     Task<ICollection<Device>> GetByUserIdAsync(string id);
 

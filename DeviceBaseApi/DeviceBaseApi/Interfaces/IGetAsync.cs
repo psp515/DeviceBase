@@ -1,14 +1,21 @@
 ﻿using DeviceBaseApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DeviceBaseApi.Interfaces;
 
-/// <summary>
-/// 
-/// </summary>
-/// <typeparam name="T"> Type of object to get. </typeparam>
-/// <typeparam name="T1"> Type of id field. </typeparam>
-public interface IGetAsync<T, T1>
+public interface IGetAsync<T> where T : BaseModel
 {
-    Task<ICollection<T>> GetAllAsync();
-    Task<T> GetAsync(T1 id);
+    protected DataContext db { get; }
+
+    async Task<ICollection<T>> GetAllAsync()
+    {
+        var itemCollection = await db.GetDbSet<T>().ToListAsync();
+        return itemCollection;
+    }
+
+    async Task<T> GetAsync(int id)
+    {
+        var foundItem = await db.GetDbSet<T>().FindAsync(id);
+        return foundItem;
+    }
 }

@@ -71,7 +71,7 @@ builder.Services.AddAuthentication(x =>
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(ApplicationPolicies.AdminPolicy, policy => policy.RequireRole(new string[] { ApplicationRoles.Admin }));
-    options.AddPolicy(ApplicationPolicies.CustomerPolicy, policy => policy.RequireRole(new string[] { ApplicationRoles.Admin, ApplicationRoles.AuthorizedUser }));
+    options.AddPolicy(ApplicationPolicies.UserPolicy, policy => policy.RequireRole(new string[] { ApplicationRoles.Admin, ApplicationRoles.AuthorizedUser }));
 });
 
 

@@ -4,12 +4,11 @@ namespace DeviceBaseApi;
 
 public abstract class BaseService
 {
-    protected readonly DataContext db;
-    protected readonly IMapper mapper;
+    private readonly DataContext _db;
+    public DataContext db => _db;
 
-    public BaseService(DataContext db, IMapper mapper)
+    public BaseService(DataContext db)
     {
-        this.db = db;
-        this.mapper = mapper;
+        this._db = db;
     }
 }

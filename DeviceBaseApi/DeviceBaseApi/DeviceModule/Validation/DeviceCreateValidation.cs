@@ -7,9 +7,17 @@ public class DeviceCreateValidation : AbstractValidator<DeviceCreateDTO>
 {
     public DeviceCreateValidation()
     {
-        RuleFor(model => model.SerialNumber).NotEmpty();
-        RuleFor(model => model.MqttUrl).Must(IsUrl);
-        RuleFor(model => model.Produced).LessThan(DateTime.Now);
+        RuleFor(model => model.SerialNumber)
+            .NotEmpty()
+            .WithMessage("Invalid serial number.");
+
+        RuleFor(model => model.MqttUrl)
+            .Must(IsUrl)
+            .WithMessage("Url is not valid url.");
+
+        RuleFor(model => model.Produced)
+            .LessThan(DateTime.Now)
+            .WithMessage("Invalid production date.");
     }
 
     private static bool IsUrl(string link)
