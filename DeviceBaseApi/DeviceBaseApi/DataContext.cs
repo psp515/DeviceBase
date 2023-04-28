@@ -57,7 +57,7 @@ public class DataContext : IdentityDbContext<User>
                 Produced = DateTime.Now,
                 MqttUrl = "https://www.google.pl/",
                 SerialNumber = "21371",
-                DeviceType = defaultDeviceType,
+                DeviceTypeId = 1,
                 DeviceName = "SP611",
                 DevicePlacing = "None",
                 Description = "",
@@ -72,13 +72,11 @@ public class DataContext : IdentityDbContext<User>
                 Produced = DateTime.Now,
                 MqttUrl = "https://www.hivemq.com/",
                 SerialNumber = "21372",
-                DeviceType = defaultDeviceType,
+                DeviceTypeId = 1,
                 DeviceName = "SP611",
                 DevicePlacing = "None",
                 Description = "",
                 Users = new List<User>()
-            });
-
-        
+            });   
     }
 }
