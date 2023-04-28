@@ -9,11 +9,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using DeviceBaseApi.AuthModule;
 using DeviceBaseApi.Interfaces;
 using DeviceBaseApi.DeviceModule;
+using DeviceBaseApi.DeviceTypeModule;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddIdentity<User, IdentityRole>().AddDefaultTokenProviders().AddEntityFrameworkStores<DataContext>();
 builder.Services.AddSwaggerGen(option => {
@@ -74,10 +73,9 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy(ApplicationPolicies.UserPolicy, policy => policy.RequireRole(new string[] { ApplicationRoles.Admin, ApplicationRoles.AuthorizedUser }));
 });
 
-
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IDeviceService, DeviceService>();
-
+builder.Services.AddScoped<IDeviceTypeService, DeviceTypeService>();
 
 var app = builder.Build();
 
@@ -92,7 +90,8 @@ app.UseAuthorization();
 var endpoints = new List<IEndpoint>
 {
     new AuthEndpoints(),
-    new DeviceEndpoints()
+    new DeviceEndpoints(),
+    new DeviceTypeEndpoints()
 };
 
 endpoints.ForEach(endpoint => endpoint.Configure(app));

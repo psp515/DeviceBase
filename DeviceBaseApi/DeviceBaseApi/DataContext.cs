@@ -41,7 +41,7 @@ public class DataContext : IdentityDbContext<User>
             Edited = DateTime.Now,
             DefaultName = "SP611",
             MaximalNumberOfUsers = 5,
-            MqttEndpoints = new List<string> { "state", "mode", "ping" }
+            EndpointsJson = "[\"state\",\"mode\",\"ping\"]"
         };
 
         modelBuilder.Entity<DeviceType>()

@@ -58,9 +58,8 @@ public class AuthService : BaseService, IAuthService
         {
             Subject = new ClaimsIdentity(new Claim[]
             {
-                new Claim(ClaimTypes.Name,user.UserName),
                 new Claim(ClaimTypes.Role, roles.FirstOrDefault()),
-                new Claim(ClaimTypes.PrimarySid, user.Id),
+                new Claim("UserId", user.Id),
             }),
             Expires = DateTime.UtcNow.AddDays(1),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

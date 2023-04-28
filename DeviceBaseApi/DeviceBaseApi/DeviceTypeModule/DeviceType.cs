@@ -1,13 +1,16 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using DeviceBaseApi.DeviceModule;
 
 namespace DeviceBaseApi.DeviceTypeModule;
 
 public class DeviceType : BaseModel
 {
-    public string DefaultName { get; set; } = string.Empty;
+    public string DefaultName { get; set; }
 
     public int MaximalNumberOfUsers { get; set; }
 
-    public ICollection<string> MqttEndpoints { get; set; } = new List<string>();
+    public string EndpointsJson { get; set; }
+
+    public ICollection<Device> Devices { get; set; } = new List<Device>();
 }
