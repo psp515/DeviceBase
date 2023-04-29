@@ -89,7 +89,10 @@ public class AuthService : BaseService, IAuthService
             {
                 await ChcekRoles();
 
-                await _userManager.AddToRoleAsync(newUser, ApplicationRoles.Admin);
+                if(_configuration.GetValue<string>("ApiSettings:Environment") == "Development")
+                    await _userManager.AddToRoleAsync(newUser, ApplicationRoles.Admin);
+                else
+                    await _userManager.AddToRoleAsync(newUser, ApplicationRoles.AuthorizedUser);
 
                 var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == newUser.Email);
 

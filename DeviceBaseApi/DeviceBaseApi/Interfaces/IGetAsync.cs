@@ -1,5 +1,4 @@
-﻿using DeviceBaseApi.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace DeviceBaseApi.Interfaces;
 

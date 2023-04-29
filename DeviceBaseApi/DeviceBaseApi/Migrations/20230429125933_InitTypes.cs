@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DeviceBaseApi.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class InitTypes : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -53,20 +53,20 @@ namespace DeviceBaseApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Coupons",
+                name: "DeviceTypes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Percent = table.Column<int>(type: "int", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DefaultName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MaximalNumberOfUsers = table.Column<int>(type: "int", nullable: false),
+                    EndpointsJson = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Edited = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Coupons", x => x.Id);
+                    table.PrimaryKey("PK_DeviceTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -175,13 +175,69 @@ namespace DeviceBaseApi.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Devices",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DeviceName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DevicePlacing = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeviceTypeId = table.Column<int>(type: "int", nullable: false),
+                    MqttUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SerialNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Produced = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Edited = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Devices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Devices_DeviceTypes_DeviceTypeId",
+                        column: x => x.DeviceTypeId,
+                        principalTable: "DeviceTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DeviceUser",
+                columns: table => new
+                {
+                    DevicesId = table.Column<int>(type: "int", nullable: false),
+                    UsersId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DeviceUser", x => new { x.DevicesId, x.UsersId });
+                    table.ForeignKey(
+                        name: "FK_DeviceUser_AspNetUsers_UsersId",
+                        column: x => x.UsersId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DeviceUser_Devices_DevicesId",
+                        column: x => x.DevicesId,
+                        principalTable: "Devices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
-                table: "Coupons",
-                columns: new[] { "Id", "Created", "IsActive", "LastUpdated", "Name", "Percent" },
+                table: "DeviceTypes",
+                columns: new[] { "Id", "Created", "DefaultName", "Edited", "EndpointsJson", "MaximalNumberOfUsers" },
+                values: new object[] { 1, new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7447), "SP611", new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7484), "[\"state\",\"mode\",\"ping\"]", 5 });
+
+            migrationBuilder.InsertData(
+                table: "Devices",
+                columns: new[] { "Id", "Created", "Description", "DeviceName", "DevicePlacing", "DeviceTypeId", "Edited", "MqttUrl", "Produced", "SerialNumber" },
                 values: new object[,]
                 {
-                    { 1, null, true, null, "10OFF", 10 },
-                    { 2, null, true, null, "20OFF", 20 }
+                    { 1, new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7627), "", "SP611", "None", 1, new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7630), "https://www.google.pl/", new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7632), "21371" },
+                    { 2, new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7637), "", "SP611", "None", 1, new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7638), "https://www.hivemq.com/", new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7639), "21372" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -222,6 +278,16 @@ namespace DeviceBaseApi.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Devices_DeviceTypeId",
+                table: "Devices",
+                column: "DeviceTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DeviceUser_UsersId",
+                table: "DeviceUser",
+                column: "UsersId");
         }
 
         /// <inheritdoc />
@@ -243,13 +309,19 @@ namespace DeviceBaseApi.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Coupons");
+                name: "DeviceUser");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Devices");
+
+            migrationBuilder.DropTable(
+                name: "DeviceTypes");
         }
     }
 }

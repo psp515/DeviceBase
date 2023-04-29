@@ -166,7 +166,7 @@ public class DeviceEndpoints : IEndpoint
         if (guid == null)
             return Results.BadRequest("Invalid token.");
 
-        var connection = await service.DisconnectDevice(id, guid);
+        var connection = await service.ConnectDevice(id, guid);
 
         if (!connection.Success)
             return Results.BadRequest(new RestResponse(connection.Error));

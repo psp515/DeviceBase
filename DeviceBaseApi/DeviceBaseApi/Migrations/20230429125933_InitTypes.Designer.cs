@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeviceBaseApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230417094414_InitDevices")]
-    partial class InitDevices
+    [Migration("20230429125933_InitTypes")]
+    partial class InitTypes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -90,57 +90,13 @@ namespace DeviceBaseApi.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("DeviceBaseApi.Coupons.Coupon", b =>
+            modelBuilder.Entity("DeviceBaseApi.DeviceModule.Device", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime?>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Percent")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Coupons");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            IsActive = true,
-                            Name = "10OFF",
-                            Percent = 10
-                        },
-                        new
-                        {
-                            Id = 2,
-                            IsActive = true,
-                            Name = "20OFF",
-                            Percent = 20
-                        });
-                });
-
-            modelBuilder.Entity("DeviceBaseApi.DeviceModule.Device", b =>
-                {
-                    b.Property<int>("DeviceId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DeviceId"), 1L, 1);
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -154,6 +110,9 @@ namespace DeviceBaseApi.Migrations
                     b.Property<string>("DevicePlacing")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("DeviceTypeId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("Edited")
                         .HasColumnType("datetime2");
 
@@ -166,31 +125,89 @@ namespace DeviceBaseApi.Migrations
                     b.Property<string>("SerialNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("DeviceId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeviceTypeId");
 
                     b.ToTable("Devices");
 
                     b.HasData(
                         new
                         {
-                            DeviceId = 1,
-                            Created = new DateTime(2023, 4, 17, 11, 44, 14, 790, DateTimeKind.Local).AddTicks(5191),
-                            Edited = new DateTime(2023, 4, 17, 11, 44, 14, 790, DateTimeKind.Local).AddTicks(5234),
+                            Id = 1,
+                            Created = new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7627),
+                            Description = "",
+                            DeviceName = "SP611",
+                            DevicePlacing = "None",
+                            DeviceTypeId = 1,
+                            Edited = new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7630),
                             MqttUrl = "https://www.google.pl/",
-                            Produced = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SerialNumber = "1094205034"
+                            Produced = new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7632),
+                            SerialNumber = "21371"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Created = new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7637),
+                            Description = "",
+                            DeviceName = "SP611",
+                            DevicePlacing = "None",
+                            DeviceTypeId = 1,
+                            Edited = new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7638),
+                            MqttUrl = "https://www.hivemq.com/",
+                            Produced = new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7639),
+                            SerialNumber = "21372"
+                        });
+                });
+
+            modelBuilder.Entity("DeviceBaseApi.DeviceTypeModule.DeviceType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DefaultName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Edited")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EndpointsJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MaximalNumberOfUsers")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DeviceTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Created = new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7447),
+                            DefaultName = "SP611",
+                            Edited = new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7484),
+                            EndpointsJson = "[\"state\",\"mode\",\"ping\"]",
+                            MaximalNumberOfUsers = 5
                         });
                 });
 
             modelBuilder.Entity("DeviceUser", b =>
                 {
-                    b.Property<int>("DevicesDeviceId")
+                    b.Property<int>("DevicesId")
                         .HasColumnType("int");
 
                     b.Property<string>("UsersId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("DevicesDeviceId", "UsersId");
+                    b.HasKey("DevicesId", "UsersId");
 
                     b.HasIndex("UsersId");
 
@@ -330,11 +347,22 @@ namespace DeviceBaseApi.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("DeviceBaseApi.DeviceModule.Device", b =>
+                {
+                    b.HasOne("DeviceBaseApi.DeviceTypeModule.DeviceType", "DeviceType")
+                        .WithMany("Devices")
+                        .HasForeignKey("DeviceTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DeviceType");
+                });
+
             modelBuilder.Entity("DeviceUser", b =>
                 {
                     b.HasOne("DeviceBaseApi.DeviceModule.Device", null)
                         .WithMany()
-                        .HasForeignKey("DevicesDeviceId")
+                        .HasForeignKey("DevicesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -394,6 +422,11 @@ namespace DeviceBaseApi.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("DeviceBaseApi.DeviceTypeModule.DeviceType", b =>
+                {
+                    b.Navigation("Devices");
                 });
 #pragma warning restore 612, 618
         }
