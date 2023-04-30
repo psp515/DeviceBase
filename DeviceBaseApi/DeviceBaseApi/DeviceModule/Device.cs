@@ -1,4 +1,5 @@
 ﻿using DeviceBaseApi.DeviceTypeModule;
+using DeviceBaseApi.Models;
 
 namespace DeviceBaseApi.DeviceModule;
 

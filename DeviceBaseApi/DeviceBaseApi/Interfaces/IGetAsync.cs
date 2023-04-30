@@ -1,4 +1,6 @@
-﻿namespace DeviceBaseApi.Interfaces;
+﻿using DeviceBaseApi.Models;
+
+namespace DeviceBaseApi.Interfaces;
 
 public interface IGetAsync<T> where T : BaseModel
 {

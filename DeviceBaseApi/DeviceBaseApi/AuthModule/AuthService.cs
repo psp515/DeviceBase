@@ -1,4 +1,6 @@
 ﻿using DeviceBaseApi.AuthModule.DTO;
+using DeviceBaseApi.Models;
+using DeviceBaseApi.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;

@@ -22,5 +22,10 @@ public static class DeviceTypeExtensions
         type.Edited = DateTime.Now;
         type.DefaultName = dto.DefaultName;
     }
+
+    public static DeviceTypeDTO ToDeviceTypeDTO(this DeviceType type)
+    {
+        return new DeviceTypeDTO(type.Id, type.Edited, type.Created, type.DefaultName, type.MaximalNumberOfUsers, type.EndpointsJson);
+    }
 }
 

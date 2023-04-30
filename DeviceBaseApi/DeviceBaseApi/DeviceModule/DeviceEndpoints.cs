@@ -2,6 +2,7 @@
 using DeviceBaseApi.DeviceTypeModule;
 using DeviceBaseApi.Interfaces;
 using DeviceBaseApi.Models;
+using DeviceBaseApi.Utils;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -74,14 +75,19 @@ public class DeviceEndpoints : IEndpoints
         if (result == null)
             return Results.BadRequest(new RestResponse("Device is not existing."));
 
-        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, result));
+        var dto = result.ToDeviceDTO();
+
+        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, dto));
 
     }
     [Authorize]
     private async Task<IResult> GetAllAsync(IDeviceService service)
     {
         var result = await service.GetAllAsync();
-        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, result));
+
+        var dto = result.Select(x => x.ToDeviceDTO());
+
+        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, dto));
     }
     [Authorize]
     private async Task<IResult> GetUserItemsAsync(IDeviceService service,
@@ -98,7 +104,9 @@ public class DeviceEndpoints : IEndpoints
         if (result == null)
             return Results.BadRequest(new RestResponse("User not found."));
 
-        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, result));
+        var dto = result.Select(x => x.ToDeviceDTO());
+
+        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, dto));
     }
 
     [Authorize]

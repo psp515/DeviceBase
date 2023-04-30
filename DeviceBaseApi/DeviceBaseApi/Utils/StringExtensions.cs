@@ -2,7 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
-namespace DeviceBaseApi;
+namespace DeviceBaseApi.Utils;
 
 public static class StringExtensions
 {

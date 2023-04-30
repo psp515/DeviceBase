@@ -1,4 +1,4 @@
-﻿namespace DeviceBaseApi;
+﻿namespace DeviceBaseApi.Models;
 
 public record ServiceResult(bool Success, string Error = "", object Value = null);
 

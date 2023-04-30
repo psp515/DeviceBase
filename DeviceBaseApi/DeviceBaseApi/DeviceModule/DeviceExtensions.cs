@@ -30,5 +30,19 @@ public static class DeviceExtensions
         device.Description = dto.Description;
         device.DevicePlacing = dto.DevicePlacing;
     }
+
+    public static DeviceDTO ToDeviceDTO(this Device device) 
+    {
+        return new DeviceDTO(
+            device.Id,
+            device.Edited,
+            device.Created,
+            device.DeviceName,
+            device.DevicePlacing,
+            device.DeviceTypeId,
+            device.MqttUrl,
+            device.SerialNumber,
+            device.Produced);
+    }
 }
 

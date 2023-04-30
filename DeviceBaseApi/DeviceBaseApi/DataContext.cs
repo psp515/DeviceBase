@@ -1,5 +1,6 @@
 ﻿using DeviceBaseApi.DeviceModule;
 using DeviceBaseApi.DeviceTypeModule;
+using DeviceBaseApi.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

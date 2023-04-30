@@ -1,4 +1,5 @@
 ﻿using DeviceBaseApi.AuthModule.DTO;
+using DeviceBaseApi.Utils;
 
 namespace DeviceBaseApi.AuthModule;
 

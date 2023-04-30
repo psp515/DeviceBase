@@ -1,4 +1,5 @@
 ﻿using DeviceBaseApi.DeviceModule;
+using DeviceBaseApi.Utils;
 using Microsoft.AspNetCore.Identity;
 
 namespace DeviceBaseApi;

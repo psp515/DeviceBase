@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DeviceBaseApi;
+namespace DeviceBaseApi.Models;
 
 public abstract class BaseModel
 {

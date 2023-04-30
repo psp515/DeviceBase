@@ -1,4 +1,6 @@
-﻿namespace DeviceBaseApi.AuthModule;
+﻿using DeviceBaseApi.Models;
+
+namespace DeviceBaseApi.AuthModule;
 
 public interface IAuthService
 {

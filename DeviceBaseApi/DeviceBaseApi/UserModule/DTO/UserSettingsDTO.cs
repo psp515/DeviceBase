@@ -1,4 +1,6 @@
-﻿namespace DeviceBaseApi.UserModule.DTO;
+﻿using DeviceBaseApi.Utils;
+
+namespace DeviceBaseApi.UserModule.DTO;
 
 public record UserSettingsDTO(
     AppModeEnum AppMode, 

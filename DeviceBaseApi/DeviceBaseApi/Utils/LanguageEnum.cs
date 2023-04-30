@@ -1,4 +1,4 @@
-﻿namespace DeviceBaseApi;
+﻿namespace DeviceBaseApi.Utils;
 
 public enum LanguageEnum
 {

@@ -43,10 +43,20 @@ public class DeviceTypeEndpoints : IEndpoints
 
     }
 
+    public async Task<IResult> GetDeivceTypeDevices(IDeviceTypeService service)
+    {
+        // TODO : Creat endpoint.
+
+        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, null));
+    }
+
     public async Task<IResult> GetAllItemsAsync(IDeviceTypeService service)
     {
         var result = await service.GetAllAsync();
-        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, result));
+
+        var dto = result.Select(x => x.ToDeviceTypeDTO());
+
+        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, dto));
     }
 
     public async Task<IResult> GetItemAsync(IDeviceTypeService service, int id)
@@ -56,7 +66,9 @@ public class DeviceTypeEndpoints : IEndpoints
         if (result == null)
             return Results.BadRequest(new RestResponse("Item is not existing."));
 
-        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, result));
+        var dto = result.ToDeviceTypeDTO();
+
+        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, dto));
     }
 
     private async Task<IResult> UpdateItemAsync(IDeviceTypeService service,

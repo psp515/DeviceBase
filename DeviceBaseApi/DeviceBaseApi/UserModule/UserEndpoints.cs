@@ -11,7 +11,7 @@ public class UserEndpoints : IEndpoints
 {
     public void Configure(WebApplication application)
     {
-        application.MapGet("/api/user/settings", GetUserSettings)
+        application.MapGet("/api/user/settings", GetUserData)
            .WithName("Get User Settings")
            .Produces<RestResponse>(200)
            .Produces(401)
@@ -27,7 +27,7 @@ public class UserEndpoints : IEndpoints
     }
 
 
-    private async Task<IResult> GetUserSettings(IUserService service,
+    private async Task<IResult> GetUserData(IUserService service,
                                                 IConfiguration configuration,
                                                 [FromHeader(Name = "Authorization")] string bearerToken) 
     {
