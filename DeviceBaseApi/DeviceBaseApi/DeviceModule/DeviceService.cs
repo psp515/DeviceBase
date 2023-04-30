@@ -1,5 +1,4 @@
-﻿using DeviceBaseApi.DeviceTypeModule;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace DeviceBaseApi.DeviceModule;
 
@@ -24,7 +23,7 @@ public class DeviceService : BaseService, IDeviceService
         return devices;
     }
 
-    public async Task<Connection> ConnectDevice(int deviceId, string userId)
+    public async Task<ServiceResult> ConnectDevice(int deviceId, string userId)
     {
         var device = await db.Devices
             .Include(x => x.DeviceType)
@@ -32,13 +31,13 @@ public class DeviceService : BaseService, IDeviceService
             .FirstAsync(x => x.Id == deviceId);
 
         if (device == null)
-            return new Connection(false, "Device not found.");
+            return new ServiceResult(false, "Device not found.");
 
         if (device.DeviceType.MaximalNumberOfUsers < device.Users.Count)
-            return new Connection(false, "Cannot connect new user.");
+            return new ServiceResult(false, "Cannot connect new user.");
 
-        if (device.Users.Any(x=>x.Id == userId))
-            return new Connection(false, "User already connected.");
+        if (device.Users.Any(x => x.Id == userId))
+            return new ServiceResult(false, "User already connected.");
 
         var user = await db.Users
             .Include(x => x.Devices)
@@ -47,32 +46,32 @@ public class DeviceService : BaseService, IDeviceService
         user.Devices.Add(device);
         await db.SaveChangesAsync();
 
-        return new Connection(true);
+        return new ServiceResult(true);
     }
 
-    public async Task<Connection> DisconnectDevice(int deviceId, string userId)
+    public async Task<ServiceResult> DisconnectDevice(int deviceId, string userId)
     {
         var device = await db.Devices
             .Include(x => x.Users)
             .FirstAsync(x => x.Id == deviceId);
 
         if (device == null)
-            return new Connection(false, "Device not found.");
+            return new ServiceResult(false, "Device not found.");
 
         if (!device.Users.Any(x => x.Id == userId))
-            return new Connection(false, "User not connected.");
+            return new ServiceResult(false, "User not connected.");
 
         var user = await db.Users.FirstAsync(x => x.Id == userId);
 
         device.Users.Remove(user);
         await db.SaveChangesAsync();
 
-        return new Connection(true);
+        return new ServiceResult(true);
     }
 
     public async Task<bool> IsUserConnected(string guid, int id)
     {
         var user = await db.AppUsers.Include(x => x.Devices).FirstAsync(x => x.Id == guid);
-        return user.Devices.Any(x=>x.Id == id);
+        return user.Devices.Any(x => x.Id == id);
     }
 }

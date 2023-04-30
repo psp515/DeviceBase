@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-
-namespace DeviceBaseApi;
+﻿namespace DeviceBaseApi;
 
 public abstract class BaseService
 {

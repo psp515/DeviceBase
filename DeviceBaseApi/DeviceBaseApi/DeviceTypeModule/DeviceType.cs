@@ -1,6 +1,4 @@
-﻿
-using System.ComponentModel.DataAnnotations;
-using DeviceBaseApi.DeviceModule;
+﻿using DeviceBaseApi.DeviceModule;
 
 namespace DeviceBaseApi.DeviceTypeModule;
 

@@ -1,6 +1,4 @@
-﻿using DeviceBaseApi.Models;
-
-namespace DeviceBaseApi.Interfaces;
+﻿namespace DeviceBaseApi.Interfaces;
 
 public interface ICreateAsync<T> where T : BaseModel
 {

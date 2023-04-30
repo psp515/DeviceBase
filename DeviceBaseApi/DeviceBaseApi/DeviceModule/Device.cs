@@ -1,6 +1,4 @@
-﻿using DeviceBaseApi.AuthModule;
-using DeviceBaseApi.DeviceTypeModule;
-using System.ComponentModel.DataAnnotations;
+﻿using DeviceBaseApi.DeviceTypeModule;
 
 namespace DeviceBaseApi.DeviceModule;
 

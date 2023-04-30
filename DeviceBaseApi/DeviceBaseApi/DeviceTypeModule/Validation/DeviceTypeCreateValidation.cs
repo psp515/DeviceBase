@@ -1,5 +1,4 @@
-﻿using System;
-using DeviceBaseApi.DeviceTypeModule.DTO;
+﻿using DeviceBaseApi.DeviceTypeModule.DTO;
 using FluentValidation;
 using System.Text.Json;
 
@@ -7,8 +6,8 @@ namespace DeviceBaseApi.DeviceTypeModule.Validation;
 
 public class DeviceTypeCreateValidation : AbstractValidator<DeviceTypeCreateDTO>
 {
-	public DeviceTypeCreateValidation()
-	{
+    public DeviceTypeCreateValidation()
+    {
         RuleFor(model => model.DefaultName)
            .NotEmpty()
            .WithMessage("Invalid default name.");

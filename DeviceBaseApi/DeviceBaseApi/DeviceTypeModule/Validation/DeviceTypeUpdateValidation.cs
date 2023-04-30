@@ -5,8 +5,8 @@ namespace DeviceBaseApi.DeviceTypeModule.Validation;
 
 public class DeviceTypeUpdateValidation : AbstractValidator<DeviceTypeUpdateDTO>
 {
-	public DeviceTypeUpdateValidation()
-	{
+    public DeviceTypeUpdateValidation()
+    {
         RuleFor(model => model.DefaultName)
            .NotEmpty()
            .WithMessage("Invalid default name.");

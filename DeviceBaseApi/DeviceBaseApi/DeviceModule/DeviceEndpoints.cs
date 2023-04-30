@@ -3,6 +3,7 @@ using DeviceBaseApi.DeviceTypeModule;
 using DeviceBaseApi.Interfaces;
 using DeviceBaseApi.Models;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -13,6 +14,7 @@ public class DeviceEndpoints : IEndpoint
     public void Configure(WebApplication application)
     {
         /* Admin Policies */
+
         application.MapGet("/api/devices", GetAllAsync)
             .WithName("Get Devices")
             .Produces<RestResponse>(200)
@@ -64,6 +66,7 @@ public class DeviceEndpoints : IEndpoint
             .RequireAuthorization(ApplicationPolicies.UserPolicy);
     }
 
+    [Authorize]
     private async Task<IResult> GetItemAsync(IDeviceService service, int id)
     {
         var result = await service.GetAsync(id);
@@ -74,17 +77,18 @@ public class DeviceEndpoints : IEndpoint
         return Results.Ok(new RestResponse(HttpStatusCode.OK, true, result));
 
     }
+    [Authorize]
     private async Task<IResult> GetAllAsync(IDeviceService service)
     {
         var result = await service.GetAllAsync();
         return Results.Ok(new RestResponse(HttpStatusCode.OK, true, result));
     }
+    [Authorize]
     private async Task<IResult> GetUserItemsAsync(IDeviceService service,
                                                   IConfiguration configuration,
                                                   [FromHeader(Name = "Authorization")] string bearerToken)
     {
-        var token = bearerToken.Substring("Bearer ".Length).Trim();
-        var guid = token.GetUserIdIfToken(configuration.GetValue<string>("ApiSettings:Secret"));
+        var guid = bearerToken.GetValueFromToken(configuration.GetValue<string>("ApiSettings:Secret"));
 
         if (guid == null)
             return Results.BadRequest("Invalid token.");
@@ -97,6 +101,7 @@ public class DeviceEndpoints : IEndpoint
         return Results.Ok(new RestResponse(HttpStatusCode.OK, true, result));
     }
 
+    [Authorize]
     private async Task<IResult> UpdateItem(IDeviceService service,
                                            IValidator<DeviceUpdateDTO> validation,
                                            IConfiguration configuration,
@@ -105,8 +110,7 @@ public class DeviceEndpoints : IEndpoint
                                            int id)
     {
 
-        var token = bearerToken.Substring("Bearer ".Length).Trim();
-        var guid = token.GetUserIdIfToken(configuration.GetValue<string>("ApiSettings:Secret"));
+        var guid = bearerToken.GetValueFromToken(configuration.GetValue<string>("ApiSettings:Secret"));
 
         if (guid == null)
             return Results.BadRequest("Invalid token.");
@@ -136,6 +140,7 @@ public class DeviceEndpoints : IEndpoint
         return Results.Ok(new RestResponse(HttpStatusCode.OK, true, null));
     }
 
+    [Authorize]
     private async Task<IResult> CreateItem(IDeviceService deviceService,
                                            IDeviceTypeService deviceTypeService,
                                            IValidator<DeviceCreateDTO> validation,
@@ -150,21 +155,21 @@ public class DeviceEndpoints : IEndpoint
 
         if (deviceType == null)
             return Results.BadRequest("Device type not found.");
-        
+
         var device = request.CreateDevice(deviceType);
         var createdDevice = await deviceService.CreateAsync(device);
 
         return Results.Created($"/api/device/{createdDevice.Id}", new RestResponse(HttpStatusCode.Created, true, null));
     }
 
+    [Authorize]
     private async Task<IResult> ConnectDevice(IDeviceService service,
                                               IConfiguration configuration,
                                               [FromHeader(Name = "Authorization")] string bearerToken,
                                               int id)
     {
 
-        var token = bearerToken.Substring("Bearer ".Length).Trim();
-        var guid = token.GetUserIdIfToken(configuration.GetValue<string>("ApiSettings:Secret"));
+        var guid = bearerToken.GetValueFromToken(configuration.GetValue<string>("ApiSettings:Secret"));
 
         if (guid == null)
             return Results.BadRequest("Invalid token.");
@@ -177,14 +182,14 @@ public class DeviceEndpoints : IEndpoint
         return Results.NoContent();
     }
 
+    [Authorize]
     private async Task<IResult> DisconnectDevice(IDeviceService service,
                                                  IConfiguration configuration,
                                                  [FromHeader(Name = "Authorization")] string bearerToken,
                                                  int id)
     {
 
-        var token = bearerToken.Substring("Bearer ".Length).Trim();
-        var guid = token.GetUserIdIfToken(configuration.GetValue<string>("ApiSettings:Secret"));
+        var guid = bearerToken.GetValueFromToken(configuration.GetValue<string>("ApiSettings:Secret"));
 
         if (guid == null)
             return Results.BadRequest("Invalid token.");

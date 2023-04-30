@@ -1,7 +1,5 @@
-﻿using DeviceBaseApi.AuthModule;
-using DeviceBaseApi.DeviceModule;
+﻿using DeviceBaseApi.DeviceModule;
 using DeviceBaseApi.DeviceTypeModule;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -77,6 +75,6 @@ public class DataContext : IdentityDbContext<User>
                 DevicePlacing = "None",
                 Description = "",
                 Users = new List<User>()
-            });   
+            });
     }
 }

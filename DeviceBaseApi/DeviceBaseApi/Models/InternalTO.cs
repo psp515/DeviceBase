@@ -1,6 +1,4 @@
-﻿using DeviceBaseApi.AuthModule.DTO;
-
-namespace DeviceBaseApi.Models;
+﻿namespace DeviceBaseApi.Models;
 
 public class InternalTO<T> where T : class, new()
 {

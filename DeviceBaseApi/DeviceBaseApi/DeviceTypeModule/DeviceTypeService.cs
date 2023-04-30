@@ -1,10 +1,7 @@
-﻿using System;
-using DeviceBaseApi.Interfaces;
-
-namespace DeviceBaseApi.DeviceTypeModule;
+﻿namespace DeviceBaseApi.DeviceTypeModule;
 
 public class DeviceTypeService : BaseService, IDeviceTypeService
 {
-	public DeviceTypeService(DataContext db) : base(db) {}
+    public DeviceTypeService(DataContext db) : base(db) { }
 }
 

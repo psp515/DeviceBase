@@ -14,4 +14,5 @@ public class User : IdentityUser
     public bool PushNotifications { get; set; }
     public bool Localization { get; set; }
     public DateTime Edited { get; set; }
+    public DateTime Created { get; set; }
 }

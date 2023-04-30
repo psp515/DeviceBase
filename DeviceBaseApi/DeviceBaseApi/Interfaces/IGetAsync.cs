@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace DeviceBaseApi.Interfaces;
+﻿namespace DeviceBaseApi.Interfaces;
 
 public interface IGetAsync<T> where T : BaseModel
 {
