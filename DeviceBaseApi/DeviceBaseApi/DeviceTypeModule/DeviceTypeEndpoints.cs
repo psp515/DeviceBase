@@ -7,7 +7,7 @@ using System.Net;
 
 namespace DeviceBaseApi.DeviceTypeModule;
 
-public class DeviceTypeEndpoints : IEndpoint
+public class DeviceTypeEndpoints : IEndpoints
 {
     public void Configure(WebApplication application)
     {
@@ -29,7 +29,7 @@ public class DeviceTypeEndpoints : IEndpoint
         application.MapPut("/api/devicetypes/{id:int}", UpdateItemAsync)
             .WithName("Update Device Type")
             .Accepts<DeviceTypeUpdateDTO>("application/json")
-            .Produces<RestResponse>(200)
+            .Produces(204)
             .Produces(400)
             .Produces(401)
             .RequireAuthorization(ApplicationPolicies.AdminPolicy);
@@ -82,7 +82,7 @@ public class DeviceTypeEndpoints : IEndpoint
         if (updatedDeviceType == null)
             return Results.BadRequest(new RestResponse("Device not updated."));
 
-        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, null));
+        return Results.NoContent();
     }
 
     private async Task<IResult> CreateItemAsync(IDeviceTypeService service,

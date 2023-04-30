@@ -3,6 +3,7 @@ using DeviceBaseApi.AuthModule;
 using DeviceBaseApi.DeviceModule;
 using DeviceBaseApi.DeviceTypeModule;
 using DeviceBaseApi.Interfaces;
+using DeviceBaseApi.UserModule;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -78,6 +79,7 @@ builder.Services.AddTransient<ITokenGenerator, TokenGenerator>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IDeviceService, DeviceService>();
 builder.Services.AddScoped<IDeviceTypeService, DeviceTypeService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
@@ -87,9 +89,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-var endpoints = new List<IEndpoint>
+var endpoints = new List<IEndpoints>
 {
     new AuthEndpoints(),
+    new UserEndpoints(),
     new DeviceEndpoints(),
     new DeviceTypeEndpoints()
 };

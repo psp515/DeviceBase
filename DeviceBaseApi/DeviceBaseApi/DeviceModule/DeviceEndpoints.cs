@@ -9,7 +9,7 @@ using System.Net;
 
 namespace DeviceBaseApi.DeviceModule;
 
-public class DeviceEndpoints : IEndpoint
+public class DeviceEndpoints : IEndpoints
 {
     public void Configure(WebApplication application)
     {
@@ -46,7 +46,7 @@ public class DeviceEndpoints : IEndpoint
         application.MapPut("/api/devices/{id:int}", UpdateItem)
             .WithName("Update Device")
             .Accepts<DeviceUpdateDTO>("application/json")
-            .Produces<RestResponse>(200)
+            .Produces(204)
             .Produces<string>(400)
             .Produces(401)
             .RequireAuthorization(ApplicationPolicies.UserPolicy);
@@ -137,7 +137,7 @@ public class DeviceEndpoints : IEndpoint
         if (updatedDevice == null)
             return Results.BadRequest(new RestResponse("Device not updated. Item not found."));
 
-        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, null));
+        return Results.NoContent();
     }
 
     [Authorize]

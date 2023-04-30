@@ -67,6 +67,9 @@ public class AuthService : BaseService, IAuthService
         if (tokenEntity == null)
             return new ServiceResult(false, "Invalid refresh token. Logout user.");
 
+        if (oldRefreshToken.IsTokenExpired())
+            return new ServiceResult(false, "Token expired. Logout user.");
+
         db.UserTokens.Remove(tokenEntity);
 
         var result = await CreateTokens(user);
@@ -123,5 +126,12 @@ public class AuthService : BaseService, IAuthService
 
         if (!await _roleManager.RoleExistsAsync(ApplicationRoles.AuthorizedUser))
             await _roleManager.CreateAsync(new IdentityRole(ApplicationRoles.AuthorizedUser));
+    }
+
+    public async Task FailLogin(string email)
+    {
+        var user = await db.AppUsers.SingleOrDefaultAsync(x => x.Email == email);
+        user.AccessFailedCount++;
+        await db.SaveChangesAsync();
     }
 }

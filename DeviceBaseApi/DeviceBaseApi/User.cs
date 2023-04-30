@@ -8,7 +8,7 @@ public class User : IdentityUser
     public List<Device> Devices { get; set; } = new List<Device>();
 
     public AppModeEnum AppMode { get; set; }
-    public string Language { get; set; }
+    public LanguageEnum Language { get; set; }
     public string ImageUrl { get; set; }
     public bool Sounds { get; set; }
     public bool PushNotifications { get; set; }

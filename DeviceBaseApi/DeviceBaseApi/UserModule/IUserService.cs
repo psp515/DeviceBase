@@ -2,6 +2,7 @@
 
 public interface IUserService
 {
-    Task<User> GetUserSettings(string guid);
-    Task<User> UpdateUserSettings(User user);
+    Task<User> GetUser(string guid);
+    Task<User> UpdateUser(User user);
+
 }

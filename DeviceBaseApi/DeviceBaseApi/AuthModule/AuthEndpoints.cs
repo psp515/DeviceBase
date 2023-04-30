@@ -9,7 +9,7 @@ using System.Net;
 
 namespace DeviceBaseApi.AuthModule;
 
-public class AuthEndpoints : IEndpoint
+public class AuthEndpoints : IEndpoints
 {
     public void Configure(WebApplication app)
     {
@@ -57,10 +57,11 @@ public class AuthEndpoints : IEndpoint
             return Results.BadRequest(new RestResponse(loginResponse.Error));
 
         return Results.Ok(new RestResponse(HttpStatusCode.OK, true, loginResponse.Value));
+
     }
 
     private async Task<IResult> RefreshTokens(IAuthService authRepo,
-                                              IConfiguration configuration, 
+                                              IConfiguration configuration,
                                               [FromHeader(Name = "Refresh")] string bearerRefreshToken,
                                               [FromHeader(Name = "Authorization")] string bearerToken)
     {
