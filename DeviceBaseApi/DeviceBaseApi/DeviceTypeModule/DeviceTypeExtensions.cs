@@ -1,5 +1,4 @@
-﻿using System;
-using DeviceBaseApi.DeviceTypeModule.DTO;
+﻿using DeviceBaseApi.DeviceTypeModule.DTO;
 
 namespace DeviceBaseApi.DeviceTypeModule;
 
@@ -14,22 +13,14 @@ public static class DeviceTypeExtensions
 
 			EndpointsJson = dto.EndpointsJson,
 			DefaultName = dto.DefaultName,
-			Devices = dto.Devices,
 			MaximalNumberOfUsers = dto.MaximalNumberOfUsers
 		};
 	}
 
-    public static DeviceType UpdateDeviceType(this DeviceTypeUpdateDTO dto, int id)
+    public static void UpdateDeviceType(this DeviceType type, DeviceTypeUpdateDTO dto)
     {
-        return new DeviceType
-        {
-			Id = id,
-            Edited = DateTime.Now,
-
-            DefaultName = dto.DefaultName,
-            Devices = dto.Devices,
-            MaximalNumberOfUsers = dto.MaximalNumberOfUsers
-        };
+		type.Edited = DateTime.Now;
+        type.DefaultName = dto.DefaultName;
     }
 }
 

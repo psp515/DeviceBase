@@ -3,9 +3,9 @@ using DeviceBaseApi.Interfaces;
 
 namespace DeviceBaseApi.DeviceModule;
 
-public interface IDeviceService : IGetAsync<Device>, IUpdateAsync<Device>, ICreateAsync<Device>
+public interface IDeviceService : IGetAllAsync<Device>, IUpdateAsync<Device>, ICreateAsync<Device>, IGetAsync<Device>
 {
-    Task<ICollection<Device>> GetUserItems(string id);
+    Task<IEnumerable<Device>> GetUserItemsAsync(string id);
     Task<Connection> ConnectDevice(int deviceId, string userId);
     Task<Connection> DisconnectDevice(int deviceId, string userId);
     Task<bool> IsUserConnected(string guid, int id);

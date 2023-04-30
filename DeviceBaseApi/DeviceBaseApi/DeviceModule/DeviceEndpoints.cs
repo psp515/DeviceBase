@@ -1,17 +1,12 @@
-﻿using AutoMapper;
-using Azure.Core;
-using DeviceBaseApi.DeviceModule.DTO;
+﻿using DeviceBaseApi.DeviceModule.DTO;
 using DeviceBaseApi.DeviceTypeModule;
 using DeviceBaseApi.Interfaces;
 using DeviceBaseApi.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using System;
 using System.Net;
 
 namespace DeviceBaseApi.DeviceModule;
-
 
 public class DeviceEndpoints : IEndpoint
 {
@@ -94,16 +89,20 @@ public class DeviceEndpoints : IEndpoint
         if (guid == null)
             return Results.BadRequest("Invalid token.");
 
-        var result = await service.GetUserItems(guid);
+        var result = await service.GetUserItemsAsync(guid);
+
+        if (result == null)
+            return Results.BadRequest(new RestResponse("User not found."));
+
         return Results.Ok(new RestResponse(HttpStatusCode.OK, true, result));
     }
 
     private async Task<IResult> UpdateItem(IDeviceService service,
-                                             IValidator<DeviceUpdateDTO> validation,
-                                             IConfiguration configuration,
-                                             [FromBody] DeviceUpdateDTO request,
-                                             [FromHeader(Name = "Authorization")] string bearerToken,
-                                             int id)
+                                           IValidator<DeviceUpdateDTO> validation,
+                                           IConfiguration configuration,
+                                           [FromBody] DeviceUpdateDTO request,
+                                           [FromHeader(Name = "Authorization")] string bearerToken,
+                                           int id)
     {
 
         var token = bearerToken.Substring("Bearer ".Length).Trim();
@@ -117,12 +116,17 @@ public class DeviceEndpoints : IEndpoint
         if (!userConnected)
             return Results.BadRequest(new RestResponse("User is not authorized to update this device."));
 
+        var device = await service.GetAsync(id);
+
+        if (device == null)
+            return Results.BadRequest(new RestResponse("Device Type not found"));
+
         var validationResult = await validation.ValidateAsync(request);
 
         if (!validationResult.IsValid)
             return Results.BadRequest(new RestResponse(validationResult.Errors.FirstOrDefault().ErrorMessage));
 
-        var device = request.UpdateDevice(id);
+        device.UpdateDevice(request);
 
         var updatedDevice = await service.UpdateAsync(device);
 
@@ -133,9 +137,9 @@ public class DeviceEndpoints : IEndpoint
     }
 
     private async Task<IResult> CreateItem(IDeviceService deviceService,
-                                             IDeviceTypeService deviceTypeService,
-                                             IValidator<DeviceCreateDTO> validation,
-                                             [FromBody] DeviceCreateDTO request)
+                                           IDeviceTypeService deviceTypeService,
+                                           IValidator<DeviceCreateDTO> validation,
+                                           [FromBody] DeviceCreateDTO request)
     {
         var validationResult = await validation.ValidateAsync(request);
 
@@ -152,7 +156,6 @@ public class DeviceEndpoints : IEndpoint
 
         return Results.Created($"/api/device/{createdDevice.Id}", new RestResponse(HttpStatusCode.Created, true, null));
     }
-
 
     private async Task<IResult> ConnectDevice(IDeviceService service,
                                               IConfiguration configuration,

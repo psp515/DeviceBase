@@ -10,14 +10,20 @@ public class DeviceService : BaseService, IDeviceService
 
     }
 
-    public async Task<ICollection<Device>> GetUserItems(string guid)
+    public async Task<IEnumerable<Device>> GetUserItemsAsync(string guid)
     {
         var user = await db.AppUsers
             .Include(x => x.Devices)
-            .FirstAsync(x => x.Id == guid);
+            .SingleOrDefaultAsync(x => x.Id == guid);
 
-        return user.Devices;
+        if (user == null)
+            return null;
+
+        var devices = user.Devices.Select(x => { x.Users = null; return x; });
+
+        return devices;
     }
+
     public async Task<Connection> ConnectDevice(int deviceId, string userId)
     {
         var device = await db.Devices
@@ -69,6 +75,4 @@ public class DeviceService : BaseService, IDeviceService
         var user = await db.AppUsers.Include(x => x.Devices).FirstAsync(x => x.Id == guid);
         return user.Devices.Any(x=>x.Id == id);
     }
-
-
 }

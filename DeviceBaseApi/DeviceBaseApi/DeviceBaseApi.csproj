@@ -25,6 +25,8 @@
     <Folder Include="Migrations\" />
     <Folder Include="DeviceTypeModule\DTO\" />
     <Folder Include="DeviceTypeModule\Validation\" />
+    <Folder Include="UserModule\DTO\" />
+    <Folder Include="UserModule\Validation\" />
   </ItemGroup>
 
   <ItemGroup>

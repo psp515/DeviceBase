@@ -1,6 +1,4 @@
-﻿using System;
-using DeviceBaseApi.DeviceModule;
-using DeviceBaseApi.DeviceModule.DTO;
+﻿using DeviceBaseApi.DeviceModule.DTO;
 using DeviceBaseApi.DeviceTypeModule;
 
 namespace DeviceBaseApi.DeviceModule;
@@ -25,17 +23,12 @@ public static class DeviceExtensions
         };
     }
 
-    public static Device UpdateDevice(this DeviceUpdateDTO dto, int id)
+    public static void UpdateDevice(this Device device, DeviceUpdateDTO dto)
     {
-        return new Device
-        {
-            Id = id,
-            Edited = DateTime.Now,
-
-            DeviceName = dto.DeviceName,
-            Description = dto.Description,
-            DevicePlacing = dto.DevicePlacing
-        };
+        device.Edited = DateTime.Now;
+        device.DeviceName = dto.DeviceName;
+        device.Description = dto.Description;
+        device.DevicePlacing = dto.DevicePlacing;
     }
 }
 

@@ -1,14 +1,8 @@
-﻿using System;
-using System.Net;
-using AutoMapper;
-using DeviceBaseApi.DeviceModule;
-using DeviceBaseApi.DeviceModule.DTO;
+﻿using System.Net;
 using DeviceBaseApi.DeviceTypeModule.DTO;
-using DeviceBaseApi.DeviceTypeModule.Validation;
 using DeviceBaseApi.Interfaces;
 using DeviceBaseApi.Models;
 using FluentValidation;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DeviceBaseApi.DeviceTypeModule;
@@ -59,7 +53,7 @@ public class DeviceTypeEndpoints : IEndpoint
     {
         var result = await service.GetAsync(id);
 
-        if (result != null)
+        if (result == null)
             return Results.BadRequest(new RestResponse("Item is not existing."));
 
         return Results.Ok(new RestResponse(HttpStatusCode.OK, true, result));
@@ -71,17 +65,22 @@ public class DeviceTypeEndpoints : IEndpoint
                                                 [FromBody] DeviceTypeUpdateDTO request)
     {
 
+        var deviceType = await service.GetAsync(id);
+
+        if (deviceType == null)
+            return Results.BadRequest(new RestResponse("Device Type not found"));
+
         var validationResult = await validation.ValidateAsync(request);
 
         if (!validationResult.IsValid)
             return Results.BadRequest(new RestResponse(validationResult.Errors.FirstOrDefault().ErrorMessage));
 
-        var device = request.UpdateDeviceType(id);
+        deviceType.UpdateDeviceType(request);
 
-        var updatedDeviceType = await service.UpdateAsync(device);
+        var updatedDeviceType = await service.UpdateAsync(deviceType);
 
         if (updatedDeviceType == null)
-            return Results.BadRequest(new RestResponse("Device not updated. Item not found."));
+            return Results.BadRequest(new RestResponse("Device not updated."));
 
         return Results.Ok(new RestResponse(HttpStatusCode.OK, true, null));
     }

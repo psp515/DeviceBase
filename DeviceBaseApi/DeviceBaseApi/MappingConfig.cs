@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using DeviceBaseApi.AuthModule;
 using DeviceBaseApi.AuthModule.DTO;
 
 namespace DeviceBaseApi;
