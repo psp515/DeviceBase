@@ -8,25 +8,27 @@ public class UserSettingsValidation : AbstractValidator<UserSettingsDTO>
 {
     public UserSettingsValidation()
     {
-        RuleFor(model => model.UserName)
-            .NotEmpty();
 
         RuleFor(model => model.PhoneNumber)
-            .Must(IsPhoneNumber);
+            .Must(IsPhoneNumber)
+            .WithMessage("Invalid phone format should be +xx-xxx-xxx-xxx.");
 
         RuleFor(model => model.ImageUrl)
-            .Must(IsUrl);
+            .Must(IsUrl)
+            .WithMessage("Image is not valid url.");
 
         RuleFor(model => model.Language)
-            .IsInEnum();
+            .IsInEnum()
+            .WithMessage("Invalid Language enum value.");
 
         RuleFor(model => model.AppMode)
-            .IsInEnum();
+            .IsInEnum()
+            .WithMessage("Invalid App Mode enum value.");
     }
 
     private static bool IsPhoneNumber(string number) 
     {
-        string pattern = @"^\+?\d{0,2}\-?\d{3}\-?\d{3}\-?\d{4}$";
+        string pattern = @"^\+?\d{0,2}\-?\d{3}\-?\d{3}\-?\d{3,4}$";
         Regex regex = new Regex(pattern);
 
         return regex.Match(number).Success;

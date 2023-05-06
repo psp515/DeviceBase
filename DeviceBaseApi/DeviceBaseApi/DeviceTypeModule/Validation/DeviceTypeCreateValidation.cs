@@ -21,6 +21,6 @@ public class DeviceTypeCreateValidation : AbstractValidator<DeviceTypeCreateDTO>
             .WithMessage("Number of endpoints must be at least 1.");
     }
 
-    private static bool ContainsElements(string items) => JsonSerializer.Deserialize<List<string>>(items).Count > 0;
+    private static bool ContainsElements(string items) => items.Split(',').Length > 0;
 }
 

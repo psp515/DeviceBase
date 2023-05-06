@@ -1,6 +1,7 @@
 ﻿using DeviceBaseApi.Interfaces;
 using DeviceBaseApi.Models;
 using DeviceBaseApi.UserModule.DTO;
+using DeviceBaseApi.Utils;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -34,7 +35,7 @@ public class UserEndpoints : IEndpoints
         var guid = bearerToken.GetValueFromToken(configuration.GetValue<string>("ApiSettings:Secret"));
 
         if (guid == null)
-            return Results.BadRequest("Invalid token.");
+            return Results.BadRequest(new RestResponse("Invalid token.."));
 
         var result = await service.GetUser(guid);
 
@@ -49,31 +50,37 @@ public class UserEndpoints : IEndpoints
     private async Task<IResult> UpdateUserSettings(IUserService service,
                                                    IConfiguration configuration,
                                                    IValidator<UserSettingsDTO> validation,
+                                                   ILogger<Program> logger,
                                                    [FromBody] UserSettingsDTO request,
                                                    [FromHeader(Name = "Authorization")] string bearerToken)
     {
         var guid = bearerToken.GetValueFromToken(configuration.GetValue<string>("ApiSettings:Secret"));
+        logger.Log(LogLevel.Information, $"Here {guid}");
 
         if (guid == null)
-            return Results.BadRequest("Invalid token.");
+            return Results.BadRequest(new RestResponse("Invalid token.."));
 
+        logger.Log(LogLevel.Information, "Here");
 
         var validationResult = await validation.ValidateAsync(request);
 
         if (!validationResult.IsValid)
-            return Results.BadRequest(new RestResponse(validationResult.Errors.FirstOrDefault().ErrorMessage));
+            return Results.BadRequest(new RestResponse(validationResult.Errors.FirstOrDefault().ErrorMessage.ToString()));
+
+        logger.Log(LogLevel.Information, "Here");
 
         var user = await service.GetUser(guid);
 
+        logger.Log(LogLevel.Information, "Here");
+
         if (user == null)
-            return Results.BadRequest("User not found.");
+            return Results.BadRequest(new RestResponse("User not updated. User not found."));
 
         user.UpdateUserSettings(request);
 
-        var updatedUser = await service.UpdateUser(user);
+        logger.Log(LogLevel.Information, "Here");
 
-        if (updatedUser == null)
-            return Results.BadRequest(new RestResponse("Device not updated. Item not found."));
+        await service.UpdateUser(user);
 
         return Results.NoContent();
     }

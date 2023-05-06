@@ -1,6 +1,7 @@
 ﻿using DeviceBaseApi.DeviceTypeModule.DTO;
 using DeviceBaseApi.Interfaces;
 using DeviceBaseApi.Models;
+using DeviceBaseApi.Utils;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;

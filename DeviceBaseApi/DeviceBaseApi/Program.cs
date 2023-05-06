@@ -4,6 +4,7 @@ using DeviceBaseApi.DeviceModule;
 using DeviceBaseApi.DeviceTypeModule;
 using DeviceBaseApi.Interfaces;
 using DeviceBaseApi.UserModule;
+using DeviceBaseApi.Utils;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -13,6 +14,8 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddIdentity<User, IdentityRole>().AddDefaultTokenProviders().AddEntityFrameworkStores<DataContext>();
@@ -49,12 +52,13 @@ builder.Services.AddSwaggerGen(option =>
 });
 builder.Services.AddDbContext<DataContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-    .AddJwtBearer(x =>
+.AddJwtBearer(x =>
 {
     x.RequireHttpsMetadata = false;
     x.SaveToken = true;
@@ -74,6 +78,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy(ApplicationPolicies.AdminPolicy, policy => policy.RequireRole(new string[] { ApplicationRoles.Admin }));
     options.AddPolicy(ApplicationPolicies.UserPolicy, policy => policy.RequireRole(new string[] { ApplicationRoles.Admin, ApplicationRoles.AuthorizedUser }));
 });
+
+
 
 builder.Services.AddTransient<ITokenGenerator, TokenGenerator>();
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -105,6 +111,7 @@ app.UseHttpsRedirection();
 
 app.Run();
 
+public partial class Program { }
 
 // admin@admin
 // Admin123!

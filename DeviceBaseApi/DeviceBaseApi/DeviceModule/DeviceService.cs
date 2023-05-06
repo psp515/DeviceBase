@@ -10,6 +10,32 @@ public class DeviceService : BaseService, IDeviceService
 
     }
 
+    public async Task<Device> CreateAsync(Device item)
+    {
+        var newItem = await db.Devices.AddAsync(item);
+        await db.SaveChangesAsync();
+        return newItem.Entity;
+    }
+
+    public async Task<Device> GetAsync(int id)
+    {
+        var foundItem = await db.Devices.FindAsync(id);
+        return foundItem;
+    }
+
+    public async Task<IEnumerable<Device>> GetAllAsync()
+    {
+        var itemCollection = await db.Devices.ToListAsync();
+        return itemCollection;
+    }
+
+    public async Task<Device> UpdateAsync(Device item)
+    {
+        var newItem = db.Devices.Update(item).Entity;
+        await db.SaveChangesAsync();
+        return newItem;
+    }
+
     public async Task<IEnumerable<Device>> GetUserItemsAsync(string guid)
     {
         var user = await db.AppUsers

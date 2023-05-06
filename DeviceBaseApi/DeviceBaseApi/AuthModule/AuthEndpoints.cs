@@ -2,9 +2,9 @@
 using DeviceBaseApi.AuthModule.DTO;
 using DeviceBaseApi.Interfaces;
 using DeviceBaseApi.Models;
+using DeviceBaseApi.Utils;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using System.Net;
 
 namespace DeviceBaseApi.AuthModule;

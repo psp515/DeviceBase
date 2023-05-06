@@ -14,7 +14,6 @@ public static class UserExtensions
         user.Sounds = dto.Sounds;
         user.PushNotifications = dto.PushNotifications;
         user.PhoneNumber = dto.PhoneNumber;
-        user.UserName = dto.UserName;
         user.Localization = dto.Localization;
         user.ImageUrl = dto.ImageUrl;
     }

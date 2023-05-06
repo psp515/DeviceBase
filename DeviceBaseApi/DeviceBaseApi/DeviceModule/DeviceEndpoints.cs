@@ -59,7 +59,7 @@ public class DeviceEndpoints : IEndpoints
             .Produces(401)
             .RequireAuthorization(ApplicationPolicies.UserPolicy);
 
-        application.MapPatch("/api/devices/{id:int}/diconnect", DisconnectDevice)
+        application.MapPatch("/api/devices/{id:int}/disconnect", DisconnectDevice)
             .WithName("Disconnect Device")
             .Produces(204)
             .Produces<string>(400)
@@ -80,6 +80,7 @@ public class DeviceEndpoints : IEndpoints
         return Results.Ok(new RestResponse(HttpStatusCode.OK, true, dto));
 
     }
+
     [Authorize]
     private async Task<IResult> GetAllAsync(IDeviceService service)
     {
@@ -89,6 +90,7 @@ public class DeviceEndpoints : IEndpoints
 
         return Results.Ok(new RestResponse(HttpStatusCode.OK, true, dto));
     }
+
     [Authorize]
     private async Task<IResult> GetUserItemsAsync(IDeviceService service,
                                                   IConfiguration configuration,

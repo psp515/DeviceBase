@@ -1,9 +1,22 @@
 ﻿using System.Net;
+using System.Text.Json.Serialization;
 
 namespace DeviceBaseApi.Models;
 
 public class RestResponse
 {
+    [JsonConstructor]
+    public RestResponse(HttpStatusCode StatusCode = HttpStatusCode.BadRequest,
+                             bool IsSuccess = false,
+                             object Result = null,
+                             string ErrorMessage = "")
+    {
+        this.ErrorMessage = ErrorMessage;
+        this.IsSuccess = IsSuccess;
+        this.Result = Result;
+        this.StatusCode = StatusCode;
+    }
+
     public RestResponse(string errorMessage)
     {
         ErrorMessage = errorMessage;
