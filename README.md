@@ -63,8 +63,9 @@ Auth endpoint | ✅ | 🚧
 Device endpoint | ✅ | 🚧 
 Device type endpoint | ✅ | 🚧 
 User endpoint | ✅ | 🚧 
-Enhancing endpoints | 🚧 | ❌ 
-Testing endpoints | 🚧 | ❌ 
+Enhancing endpoints | ✅ | ❌ 
+Testing endpoints | ✅ | ❌ 
+
 
 ### License
 
