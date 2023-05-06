@@ -23,6 +23,11 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="DeviceTypeModule\Validation\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="DeviceTypeModule\DTO\" />
+    <None Remove="DeviceTypeModule\Validation\" />
+  </ItemGroup>
 </Project>

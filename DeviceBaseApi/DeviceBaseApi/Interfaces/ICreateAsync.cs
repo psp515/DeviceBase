@@ -2,7 +2,7 @@
 
 namespace DeviceBaseApi.Interfaces;
 
-public interface ICreateAsync<T> : ISave
+public interface ICreateAsync<T> where T : BaseModel
 {
     Task<T> CreateAsync(T item);
 }

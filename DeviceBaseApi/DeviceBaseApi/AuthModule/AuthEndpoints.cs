@@ -1,14 +1,15 @@
-﻿using FluentValidation;
-using System.Net;
-using Microsoft.AspNetCore.Mvc;
+﻿using Azure.Core;
 using DeviceBaseApi.AuthModule.DTO;
 using DeviceBaseApi.Interfaces;
 using DeviceBaseApi.Models;
-using AutoMapper;
+using DeviceBaseApi.Utils;
+using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace DeviceBaseApi.AuthModule;
 
-public class AuthEndpoints : IEndpoint
+public class AuthEndpoints : IEndpoints
 {
     public void Configure(WebApplication app)
     {
@@ -23,35 +24,55 @@ public class AuthEndpoints : IEndpoint
             .WithName("Register")
             .Accepts<RegisterRequestDTO>("application/json")
             .Produces<RestResponse>(201)
-            .Produces(400);
+            .Produces<RestResponse>(400);
+
+        app.MapPost("/api/auth/refresh", RefreshTokens)
+            .WithName("Refresh tokens")
+            .Produces<RestResponse>(200)
+            .Produces<RestResponse>(400);
     }
 
-    private async Task<IResult> Register(IAuthService _authRepo, IMapper mapper, [FromBody] RegisterRequestDTO request)
+    private async Task<IResult> Register(IAuthService authRepo, IConfiguration config, [FromBody] RegisterRequestDTO request)
     {
-        bool userExists = await _authRepo.UserExists(request.Email);
+        bool userExists = await authRepo.UserExists(request.Email);
 
         if (userExists)
             return Results.BadRequest(new RestResponse("Email is used by other user."));
 
-        var user = new User { Email = request.Email, UserName = request.UserName, NormalizedEmail = request.Email.ToUpper() };
+        var user = request.CreateUser(config.GetValue<string>("DefaultUserSettings:ImageUrl"));
 
-        var registerResponse = await _authRepo.Register(user, request.Password);
+        var registerResponse = await authRepo.Register(user, request.Password);
 
-        if (registerResponse.HasError)
+        if (!registerResponse.Success)
             return Results.BadRequest(new RestResponse(registerResponse.Error));
 
-        return Results.Created($"/api/user/{registerResponse.Value.Id}", new RestResponse(HttpStatusCode.Created, true, registerResponse.Value));
+        return Results.Created($"/api/user/{registerResponse.Value}", new RestResponse(HttpStatusCode.Created, true, registerResponse.Value));
     }
 
-    private async Task<IResult> Login(IAuthService _authRepo, [FromBody] LoginRequestDTO request)
+    private async Task<IResult> Login(IAuthService authRepo, [FromBody] LoginRequestDTO request)
     {
-        var loginResponse = await _authRepo.Login(request.Email, request.Password);
+        var loginResponse = await authRepo.Login(request.Email, request.Password);
 
-        if (loginResponse.HasError)
-             return Results.BadRequest(new RestResponse(loginResponse.Error));
+        if (!loginResponse.Success)
+            return Results.BadRequest(new RestResponse(loginResponse.Error));
 
-        // FIX: Better is to send token in Header
+        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, loginResponse.Value));
 
-        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, result:loginResponse.Value));
     }
+
+    private async Task<IResult> RefreshTokens(IAuthService authRepo,
+                                              IConfiguration configuration,
+                                              [FromHeader(Name = "Refresh")] string bearerRefreshToken,
+                                              [FromHeader(Name = "Authorization")] string bearerToken)
+    {
+        var guid = bearerToken.GetValueFromToken(configuration.GetValue<string>("ApiSettings:Secret"));
+
+        var loginResponse = await authRepo.RefreshTokens(bearerRefreshToken, guid);
+
+        if (!loginResponse.Success)
+            return Results.BadRequest(new RestResponse(loginResponse.Error));
+
+        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, loginResponse.Value));
+    }
+
 }

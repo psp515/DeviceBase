@@ -1,7 +1,6 @@
-﻿using DeviceBaseApi.AuthModule;
-using DeviceBaseApi.Coupons;
-using DeviceBaseApi.DeviceModule;
-using Microsoft.AspNetCore.Identity;
+﻿using DeviceBaseApi.DeviceModule;
+using DeviceBaseApi.DeviceTypeModule;
+using DeviceBaseApi.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,37 +14,68 @@ public class DataContext : IdentityDbContext<User>
     }
 
     public DbSet<User> AppUsers { get; set; }
+
     public DbSet<Device> Devices { get; set; }
-    public DbSet<Coupon> Coupons { get; set; }
+    public DbSet<DeviceType> DeviceTypes { get; set; }
+
+    public DbSet<T> GetDbSet<T>() where T : BaseModel
+    {
+        if (typeof(T) == typeof(Device))
+            return Devices as DbSet<T>;
+
+        if (typeof(T) == typeof(DeviceType))
+            return DeviceTypes as DbSet<T>;
+
+        throw new Exception($"DbSet not found for object: {nameof(T)}.");
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<Coupon>().HasData(
-            new Coupon()
+
+        var defaultDeviceType = new DeviceType()
+        {
+            Id = 1,
+            Created = DateTime.Now,
+            Edited = DateTime.Now,
+            DefaultName = "SP611",
+            MaximalNumberOfUsers = 5,
+            EndpointsJson = "[\"state\",\"mode\",\"ping\"]"
+        };
+
+        modelBuilder.Entity<DeviceType>()
+            .HasData(defaultDeviceType);
+
+        modelBuilder.Entity<Device>()
+            .HasData(new Device()
             {
                 Id = 1,
-                Name = "10OFF",
-                Percent = 10,
-                IsActive = true,
-            },
-            new Coupon()
-            {
-                Id = 2,
-                Name = "20OFF",
-                Percent = 20,
-                IsActive = true,
-            });
-
-        modelBuilder.Entity<Device>().HasData(
-            new Device()
-            {
-                DeviceId = 1,
-                Users = new List<User>(),
                 Created = DateTime.Now,
                 Edited = DateTime.Now,
+
+                Produced = DateTime.Now,
                 MqttUrl = "https://www.google.pl/",
-                SerialNumber = "1094205034"
+                SerialNumber = "21371",
+                DeviceTypeId = 1,
+                DeviceName = "SP611",
+                DevicePlacing = "None",
+                Description = "",
+                Users = new List<User>()
+            },
+            new Device()
+            {
+                Id = 2,
+                Created = DateTime.Now,
+                Edited = DateTime.Now,
+
+                Produced = DateTime.Now,
+                MqttUrl = "https://www.hivemq.com/",
+                SerialNumber = "21372",
+                DeviceTypeId = 1,
+                DeviceName = "SP611",
+                DevicePlacing = "None",
+                Description = "",
+                Users = new List<User>()
             });
     }
 }

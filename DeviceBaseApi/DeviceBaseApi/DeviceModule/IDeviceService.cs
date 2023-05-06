@@ -1,12 +1,12 @@
 ﻿using DeviceBaseApi.Interfaces;
+using DeviceBaseApi.Models;
 
 namespace DeviceBaseApi.DeviceModule;
 
-public interface IDeviceService : IGetAsync<Device, int>, IUpdateAsync<Device, int>, ICreateAsync<Device>
+public interface IDeviceService : IGetAllAsync<Device>, IUpdateAsync<Device>, ICreateAsync<Device>, IGetAsync<Device>
 {
-    Task<ICollection<Device>> GetByUserIdAsync(string id);
-
-    Task<bool> IsUserConnected(string userId, int deviceId);
-    Task<bool> ConnectDevice(int deviceId, string userId);
-    Task<bool> DisconnectDevice(int deviceId, string userId);
+    Task<IEnumerable<Device>> GetUserItemsAsync(string id);
+    Task<ServiceResult> ConnectDevice(int deviceId, string userId);
+    Task<ServiceResult> DisconnectDevice(int deviceId, string userId);
+    Task<bool> IsUserConnected(string guid, int id);
 }

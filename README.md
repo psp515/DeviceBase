@@ -34,8 +34,6 @@ Provided Endpoints:
 - device - endpoint for managing physical devices - provides methods for 2 roles - user is able to update device and connect / discounnet to device 
 - user [inprogress] - endpoint for basic user request as get information about user some endpoints for admin user might be added
 - devicetype [inprogress] - endpoint describes base properties of device for admin users only 
-- devicecharacteristic [under consiederation] - endpoint might describe posible use cases of the device 
-- deviceschedules [under consiederation] - endpoint might describe device working schedules provided by users.  
 
 Database is creared with code first approach.
 
@@ -63,11 +61,10 @@ Area| Finished | Approved
 Setup | ✅  | ✅ 
 Auth endpoint | ✅ | 🚧 
 Device endpoint | ✅ | 🚧 
-Device type endpoint | 🚧 | ❌ 
-User endpoint | 🚧 | ❌ 
-Enhancing endpoints | 🚧 | ❌ 
-Database Schema | ❌  | ❌ 
-
+Device type endpoint | ✅ | 🚧 
+User endpoint | ✅ | 🚧 
+Enhancing endpoints | ✅ | ❌ 
+Testing endpoints | ✅ | ❌ 
 
 
 ### License

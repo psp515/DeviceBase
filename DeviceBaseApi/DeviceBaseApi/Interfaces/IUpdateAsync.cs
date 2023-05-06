@@ -2,7 +2,7 @@
 
 namespace DeviceBaseApi.Interfaces;
 
-public interface IUpdateAsync<T, TId> : ISave, IExistAsync<TId>
+public interface IUpdateAsync<T> where T : BaseModel
 {
     Task<T> UpdateAsync(T item);
 }

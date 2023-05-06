@@ -1,6 +1,6 @@
 ﻿namespace DeviceBaseApi.Interfaces;
 
-public interface IEndpoint
+public interface IEndpoints
 {
     void Configure(WebApplication application);
 }

@@ -1,23 +1,26 @@
-using FluentValidation;
 using DeviceBaseApi;
+using DeviceBaseApi.AuthModule;
+using DeviceBaseApi.DeviceModule;
+using DeviceBaseApi.DeviceTypeModule;
+using DeviceBaseApi.Interfaces;
+using DeviceBaseApi.UserModule;
+using DeviceBaseApi.Utils;
+using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using DeviceBaseApi.AuthModule;
-using DeviceBaseApi.Interfaces;
-using DeviceBaseApi.Coupons;
-using DeviceBaseApi.DeviceModule;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddIdentity<User, IdentityRole>().AddDefaultTokenProviders().AddEntityFrameworkStores<DataContext>();
-builder.Services.AddSwaggerGen(option => {
+builder.Services.AddSwaggerGen(option =>
+{
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description =
@@ -48,38 +51,41 @@ builder.Services.AddSwaggerGen(option => {
     });
 });
 builder.Services.AddDbContext<DataContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(x =>
+})
+.AddJwtBearer(x =>
 {
     x.RequireHttpsMetadata = false;
     x.SaveToken = true;
     x.TokenValidationParameters = new TokenValidationParameters
     {
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetValue<string>("Jwt:AccessTokenSecret"))),
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(
-            builder.Configuration.GetValue<string>("ApiSettings:Secret"))),
+        ValidateLifetime = true,
         ValidateIssuer = false,
-        ValidateAudience = false
-
+        ValidateAudience = false,
+        ClockSkew = TimeSpan.Zero
     };
 });
 
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(ApplicationPolicies.AdminPolicy, policy => policy.RequireRole(new string[] { ApplicationRoles.Admin }));
-    options.AddPolicy(ApplicationPolicies.CustomerPolicy, policy => policy.RequireRole(new string[] { ApplicationRoles.Admin, ApplicationRoles.AuthorizedUser }));
+    options.AddPolicy(ApplicationPolicies.UserPolicy, policy => policy.RequireRole(new string[] { ApplicationRoles.Admin, ApplicationRoles.AuthorizedUser }));
 });
 
 
-builder.Services.AddScoped<ICouponRepository, CouponRepository>();
+
+builder.Services.AddTransient<ITokenGenerator, TokenGenerator>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IDeviceService, DeviceService>();
-
+builder.Services.AddScoped<IDeviceTypeService, DeviceTypeService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
@@ -88,24 +94,24 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseAuthentication();
-app.UseAuthorization();
 
-var endpoints = new List<IEndpoint>
+var endpoints = new List<IEndpoints>
 {
     new AuthEndpoints(),
-    new DeviceEndpoints()
+    new UserEndpoints(),
+    new DeviceEndpoints(),
+    new DeviceTypeEndpoints()
 };
 
 endpoints.ForEach(endpoint => endpoint.Configure(app));
 
-//TODO: Delete
-app.ConfigureCouponEndpoints();
-
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseHttpsRedirection();
 
 app.Run();
 
+public partial class Program { }
 
 // admin@admin
 // Admin123!
