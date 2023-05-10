@@ -3,6 +3,8 @@
   <h1> Device Base </h1>
 
 <br/>
+  
+</div>
 
 
 
@@ -29,10 +31,9 @@ Endpointy możemy pogrupować:
 #### Baza danych 
 
 <div> 
-  <a>
-    <img src="https://img.shields.io/badge/-CSharp-2E8B57?logo=csharp" />
-  </a>
+    <img src="https://github.com/psp515/DeviceBase/blob/main/docs/database.png" />
 </div>
+
 
 Baza danych zawiera wiele tabel, wiekszość z nich jest generowana na potrzeby wewnętrze Identity Component który wykorzystywany jest do autoryzacji i autentykacji.
 Oprócz tego baza zawiera tabele z urządzeniami oraz ich typami oraz tabele przejścia pomiedzy urządzeniami oraz uytkownikami.
