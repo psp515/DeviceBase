@@ -42,6 +42,9 @@ namespace DeviceBaseApi.Migrations
                     b.Property<string>("DevicePlacing")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DeviceSecret")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("DeviceTypeId")
                         .HasColumnType("int");
 
@@ -49,6 +52,12 @@ namespace DeviceBaseApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("MqttUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("NewConnectionsPermitted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("OwnerId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Produced")
@@ -67,27 +76,29 @@ namespace DeviceBaseApi.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2023, 4, 30, 9, 30, 10, 656, DateTimeKind.Local).AddTicks(4545),
+                            Created = new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1347),
                             Description = "",
                             DeviceName = "SP611",
                             DevicePlacing = "None",
                             DeviceTypeId = 1,
-                            Edited = new DateTime(2023, 4, 30, 9, 30, 10, 656, DateTimeKind.Local).AddTicks(4548),
+                            Edited = new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1350),
                             MqttUrl = "https://www.google.pl/",
-                            Produced = new DateTime(2023, 4, 30, 9, 30, 10, 656, DateTimeKind.Local).AddTicks(4549),
+                            NewConnectionsPermitted = false,
+                            Produced = new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1352),
                             SerialNumber = "21371"
                         },
                         new
                         {
                             Id = 2,
-                            Created = new DateTime(2023, 4, 30, 9, 30, 10, 656, DateTimeKind.Local).AddTicks(4554),
+                            Created = new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1359),
                             Description = "",
                             DeviceName = "SP611",
                             DevicePlacing = "None",
                             DeviceTypeId = 1,
-                            Edited = new DateTime(2023, 4, 30, 9, 30, 10, 656, DateTimeKind.Local).AddTicks(4556),
+                            Edited = new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1361),
                             MqttUrl = "https://www.hivemq.com/",
-                            Produced = new DateTime(2023, 4, 30, 9, 30, 10, 656, DateTimeKind.Local).AddTicks(4557),
+                            NewConnectionsPermitted = false,
+                            Produced = new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1362),
                             SerialNumber = "21372"
                         });
                 });
@@ -123,9 +134,9 @@ namespace DeviceBaseApi.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2023, 4, 30, 9, 30, 10, 656, DateTimeKind.Local).AddTicks(4345),
+                            Created = new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1105),
                             DefaultName = "SP611",
-                            Edited = new DateTime(2023, 4, 30, 9, 30, 10, 656, DateTimeKind.Local).AddTicks(4386),
+                            Edited = new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1152),
                             EndpointsJson = "[\"state\",\"mode\",\"ping\"]",
                             MaximalNumberOfUsers = 5
                         });
@@ -146,6 +157,9 @@ namespace DeviceBaseApi.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("Edited")
                         .HasColumnType("datetime2");
 
@@ -159,8 +173,8 @@ namespace DeviceBaseApi.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Language")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Language")
+                        .HasColumnType("int");
 
                     b.Property<bool>("Localization")
                         .HasColumnType("bit");

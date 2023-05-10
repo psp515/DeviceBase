@@ -16,6 +16,8 @@ public class TestDeviceService : IDeviceService
             DeviceName="SP611",
             DevicePlacing="Kitchen",
             DeviceTypeId = 1,
+            OwnerId="1",
+            NewConnectionsPermitted=true,
             MqttUrl="https://www.google.com",
             Produced= DateTime.Now.AddDays(-1),
             Created = DateTime.Now,
@@ -27,6 +29,8 @@ public class TestDeviceService : IDeviceService
             Description="This is descriptin",
             DeviceName="SP611E",
             DevicePlacing="No place",
+            OwnerId="1",
+            NewConnectionsPermitted=true,
             DeviceTypeId = 1,
             MqttUrl="https://www.google.com",
             Produced= DateTime.Now.AddDays(-3),
@@ -70,12 +74,22 @@ public class TestDeviceService : IDeviceService
         return new ServiceResult(true);
     }
 
+    public Task<ServiceResult> ConnectOwner(int deviceId, string userId, string secret)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<Device> CreateAsync(Device item)
     {
         Id++;
         item.Id = Id;
         Devices.Add(item);
         return Task.FromResult(item);
+    }
+
+    public Task<ServiceResult> DeviceConnectionsPolicy(int deviceId, string userId, bool newPolicy)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<ServiceResult> DisconnectDevice(int deviceId, string userId)
@@ -88,6 +102,11 @@ public class TestDeviceService : IDeviceService
         Connections.Remove(tuple);
 
         return await Task.FromResult(new ServiceResult(true));
+    }
+
+    public async Task<ServiceResult> DisconnectOwner(int deviceId, string userId)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<IEnumerable<Device>> GetAllAsync() => await Task.FromResult(Devices);

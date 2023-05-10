@@ -59,6 +59,8 @@ public class DataContext : IdentityDbContext<User>
                 DeviceName = "SP611",
                 DevicePlacing = "None",
                 Description = "",
+                DeviceSecret = "Secret",
+                NewConnectionsPermitted = false,
                 Users = new List<User>()
             },
             new Device()
@@ -74,6 +76,8 @@ public class DataContext : IdentityDbContext<User>
                 DeviceName = "SP611",
                 DevicePlacing = "None",
                 Description = "",
+                DeviceSecret = "Secret",
+                NewConnectionsPermitted = false,
                 Users = new List<User>()
             });
     }

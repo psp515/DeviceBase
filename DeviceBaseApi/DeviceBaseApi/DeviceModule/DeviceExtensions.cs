@@ -15,7 +15,9 @@ public static class DeviceExtensions
             DeviceName = deviceType.DefaultName,
             Description = "",
             DevicePlacing = "",
+            NewConnectionsPermitted = true,
 
+            DeviceSecret = dto.Secret,
             DeviceType = deviceType,
             MqttUrl = dto.MqttUrl,
             Produced = dto.Produced,
@@ -40,6 +42,8 @@ public static class DeviceExtensions
             device.DeviceName,
             device.DevicePlacing,
             device.DeviceTypeId,
+            device.NewConnectionsPermitted,
+            device.OwnerId,
             device.MqttUrl,
             device.SerialNumber,
             device.Produced);

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeviceBaseApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230429125933_InitTypes")]
-    partial class InitTypes
+    [Migration("20230510175356_ReinitDB")]
+    partial class ReinitDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,71 +24,6 @@ namespace DeviceBaseApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("DeviceBaseApi.AuthModule.User", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers", (string)null);
-                });
 
             modelBuilder.Entity("DeviceBaseApi.DeviceModule.Device", b =>
                 {
@@ -110,6 +45,9 @@ namespace DeviceBaseApi.Migrations
                     b.Property<string>("DevicePlacing")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DeviceSecret")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("DeviceTypeId")
                         .HasColumnType("int");
 
@@ -117,6 +55,12 @@ namespace DeviceBaseApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("MqttUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("NewConnectionsPermitted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("OwnerId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Produced")
@@ -135,27 +79,29 @@ namespace DeviceBaseApi.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7627),
+                            Created = new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1347),
                             Description = "",
                             DeviceName = "SP611",
                             DevicePlacing = "None",
                             DeviceTypeId = 1,
-                            Edited = new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7630),
+                            Edited = new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1350),
                             MqttUrl = "https://www.google.pl/",
-                            Produced = new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7632),
+                            NewConnectionsPermitted = false,
+                            Produced = new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1352),
                             SerialNumber = "21371"
                         },
                         new
                         {
                             Id = 2,
-                            Created = new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7637),
+                            Created = new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1359),
                             Description = "",
                             DeviceName = "SP611",
                             DevicePlacing = "None",
                             DeviceTypeId = 1,
-                            Edited = new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7638),
+                            Edited = new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1361),
                             MqttUrl = "https://www.hivemq.com/",
-                            Produced = new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7639),
+                            NewConnectionsPermitted = false,
+                            Produced = new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1362),
                             SerialNumber = "21372"
                         });
                 });
@@ -191,12 +137,101 @@ namespace DeviceBaseApi.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7447),
+                            Created = new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1105),
                             DefaultName = "SP611",
-                            Edited = new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7484),
+                            Edited = new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1152),
                             EndpointsJson = "[\"state\",\"mode\",\"ping\"]",
                             MaximalNumberOfUsers = 5
                         });
+                });
+
+            modelBuilder.Entity("DeviceBaseApi.User", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AppMode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Edited")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Language")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Localization")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("PushNotifications")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Sounds")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("DeviceUser", b =>
@@ -366,7 +401,7 @@ namespace DeviceBaseApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DeviceBaseApi.AuthModule.User", null)
+                    b.HasOne("DeviceBaseApi.User", null)
                         .WithMany()
                         .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -384,7 +419,7 @@ namespace DeviceBaseApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("DeviceBaseApi.AuthModule.User", null)
+                    b.HasOne("DeviceBaseApi.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -393,7 +428,7 @@ namespace DeviceBaseApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("DeviceBaseApi.AuthModule.User", null)
+                    b.HasOne("DeviceBaseApi.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -408,7 +443,7 @@ namespace DeviceBaseApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DeviceBaseApi.AuthModule.User", null)
+                    b.HasOne("DeviceBaseApi.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -417,7 +452,7 @@ namespace DeviceBaseApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("DeviceBaseApi.AuthModule.User", null)
+                    b.HasOne("DeviceBaseApi.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

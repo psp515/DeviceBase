@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -7,7 +8,7 @@
 namespace DeviceBaseApi.Migrations
 {
     /// <inheritdoc />
-    public partial class InitTypes : Migration
+    public partial class ReinitDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -31,6 +32,14 @@ namespace DeviceBaseApi.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AppMode = table.Column<int>(type: "int", nullable: false),
+                    Language = table.Column<int>(type: "int", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Sounds = table.Column<bool>(type: "bit", nullable: false),
+                    PushNotifications = table.Column<bool>(type: "bit", nullable: false),
+                    Localization = table.Column<bool>(type: "bit", nullable: false),
+                    Edited = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -58,8 +67,8 @@ namespace DeviceBaseApi.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DefaultName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    MaximalNumberOfUsers = table.Column<int>(type: "int", nullable: false),
                     EndpointsJson = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MaximalNumberOfUsers = table.Column<int>(type: "int", nullable: false),
                     Edited = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -183,6 +192,9 @@ namespace DeviceBaseApi.Migrations
                     DeviceName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DevicePlacing = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeviceSecret = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NewConnectionsPermitted = table.Column<bool>(type: "bit", nullable: false),
                     DeviceTypeId = table.Column<int>(type: "int", nullable: false),
                     MqttUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SerialNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -228,15 +240,15 @@ namespace DeviceBaseApi.Migrations
             migrationBuilder.InsertData(
                 table: "DeviceTypes",
                 columns: new[] { "Id", "Created", "DefaultName", "Edited", "EndpointsJson", "MaximalNumberOfUsers" },
-                values: new object[] { 1, new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7447), "SP611", new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7484), "[\"state\",\"mode\",\"ping\"]", 5 });
+                values: new object[] { 1, new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1105), "SP611", new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1152), "[\"state\",\"mode\",\"ping\"]", 5 });
 
             migrationBuilder.InsertData(
                 table: "Devices",
-                columns: new[] { "Id", "Created", "Description", "DeviceName", "DevicePlacing", "DeviceTypeId", "Edited", "MqttUrl", "Produced", "SerialNumber" },
+                columns: new[] { "Id", "Created", "Description", "DeviceName", "DevicePlacing", "DeviceSecret", "DeviceTypeId", "Edited", "MqttUrl", "NewConnectionsPermitted", "OwnerId", "Produced", "SerialNumber" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7627), "", "SP611", "None", 1, new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7630), "https://www.google.pl/", new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7632), "21371" },
-                    { 2, new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7637), "", "SP611", "None", 1, new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7638), "https://www.hivemq.com/", new DateTime(2023, 4, 29, 14, 59, 33, 860, DateTimeKind.Local).AddTicks(7639), "21372" }
+                    { 1, new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1347), "", "SP611", "None", null, 1, new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1350), "https://www.google.pl/", false, null, new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1352), "21371" },
+                    { 2, new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1359), "", "SP611", "None", null, 1, new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1361), "https://www.hivemq.com/", false, null, new DateTime(2023, 5, 10, 19, 53, 56, 664, DateTimeKind.Local).AddTicks(1362), "21372" }
                 });
 
             migrationBuilder.CreateIndex(

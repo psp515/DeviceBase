@@ -15,6 +15,10 @@ public class DeviceCreateValidation : AbstractValidator<DeviceCreateDTO>
             .Must(IsUrl)
             .WithMessage("Url is not valid url.");
 
+        RuleFor(model => model.Secret)
+            .Length(3,30)
+            .WithMessage("Invalid device secret.");
+
         RuleFor(model => model.Produced)
             .LessThan(DateTime.Now)
             .WithMessage("Invalid production date.");

@@ -7,6 +7,8 @@ public record DeviceDTO(
     string DeviceName,
     string DevicePlacing,
     int DeviceTypeId,
+    bool NewConnectionsPermitted,
+    string ownerId,
     string MqttUrl,
     string SerialNumber,
     DateTime Produced);

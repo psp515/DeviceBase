@@ -44,13 +44,6 @@ public class DeviceTypeEndpoints : IEndpoints
 
     }
 
-    public async Task<IResult> GetDeivceTypeDevices(IDeviceTypeService service)
-    {
-        // TODO : Creat endpoint.
-
-        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, null));
-    }
-
     public async Task<IResult> GetAllItemsAsync(IDeviceTypeService service)
     {
         var result = await service.GetAllAsync();

@@ -69,6 +69,9 @@ public class DeviceService : BaseService, IDeviceService
         if (device.Users.Any(x => x.Id == userId))
             return new ServiceResult(false, "User already connected.");
 
+        if (!device.NewConnectionsPermitted)
+            return new ServiceResult(false, "New connections not perrmited for this device.");
+
         var user = await db.Users
             .Include(x => x.Devices)
             .FirstAsync(x => x.Id == userId);
@@ -115,7 +118,7 @@ public class DeviceService : BaseService, IDeviceService
         if (device == null)
             return new ServiceResult(false, "Device not found.");
 
-        if (string.IsNullOrEmpty(device.OwnerId))
+        if (!string.IsNullOrEmpty(device.OwnerId))
             return new ServiceResult(false, "Device has owner.");
 
         if (device.DeviceSecret != secret)

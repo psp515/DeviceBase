@@ -279,77 +279,43 @@ public class DeviceEndpointTest
     }
 
     [Fact]
-    public async Task AlreadyConnected()
+    public async Task UnauthorisedDisconnect()
     {
         using var client = (await CreateApp()).CreateClient();
-
-        var token = await LoginAdmin(client);
-
-        client.DefaultRequestHeaders.Add("Authorization", token);
-
-        var result = await client.PatchAsync("/api/devices/1/connect", null);
-
-        var content = await result.Content.ReadFromJsonAsync<RestResponse>();
-
-        Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
-        Assert.Contains("Connection already exists.", content?.ErrorMessage);
-    }
-
-    [Fact]
-    public async Task TooMuchConnections()
-    {
-        using var client = (await CreateApp()).CreateClient();
-
-        var token = await Login(client);
-
-        client.DefaultRequestHeaders.Add("Authorization", token);
-
-        var result = await client.PatchAsync("/api/devices/1/connect", null);
-
-        var content = await result.Content.ReadFromJsonAsync<RestResponse>();
-        Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
-        Assert.Contains("Cannot connect more devices", content?.ErrorMessage);
-    }
-
-    [Fact]
-    public async Task SuccessConnection()
-    {
-        using var client = (await CreateApp()).CreateClient();
-
-        var token = await Login(client);
-
-        client.DefaultRequestHeaders.Add("Authorization", token);
-
-        var result = await client.PatchAsync("/api/devices/2/connect", null);
-
-        Assert.Equal(HttpStatusCode.NoContent, result.StatusCode);
-    }
-
-    [Fact]
-    public async Task SuccessDisconnection()
-    {
-        using var client = (await CreateApp()).CreateClient();
-
-        var token = await LoginAdmin(client);
-
-        client.DefaultRequestHeaders.Add("Authorization", token);
 
         var result = await client.PatchAsync("/api/devices/1/disconnect", null);
 
-        Assert.Equal(HttpStatusCode.NoContent, result.StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, result.StatusCode);
     }
 
     [Fact]
-    public async Task CannotDisconnect()
+    public async Task UnauthorisedDisconnectOwner()
     {
         using var client = (await CreateApp()).CreateClient();
 
-        var token = await Login(client);
+        var result = await client.PatchAsync("/api/devices/1/disconnectowner", null);
 
-        client.DefaultRequestHeaders.Add("Authorization", token);
-
-        var result = await client.PatchAsync("/api/devices/1/disconnect", null);
-
-        Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, result.StatusCode);
     }
+
+    [Fact]
+    public async Task UnauthorisedConnectOwner()
+    {
+        using var client = (await CreateApp()).CreateClient();
+
+        var result = await client.PatchAsync("/api/devices/1/connectowner", null);
+
+        Assert.Equal(HttpStatusCode.Unauthorized, result.StatusCode);
+    }
+
+    [Fact]
+    public async Task UnauthorisedChangePolicy()
+    {
+        using var client = (await CreateApp()).CreateClient();
+
+        var result = await client.PatchAsync("/api/devices/1", null);
+
+        Assert.Equal(HttpStatusCode.Unauthorized, result.StatusCode);
+    }
+
 }
