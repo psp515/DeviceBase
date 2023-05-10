@@ -9,6 +9,10 @@ public class Device : BaseModel
     public string DevicePlacing { get; set; }
     public string Description { get; set; }
 
+    public string OwnerId { get; set; }
+    public string DeviceSecret { get; set; }
+
+    public bool NewConnectionsPermitted { get; set; }
     public ICollection<User> Users { get; set; } = new List<User>();
 
     public int DeviceTypeId { get; set; }

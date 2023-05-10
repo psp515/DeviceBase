@@ -81,7 +81,7 @@ public class AuthService : BaseService, IAuthService
 
     private async Task<ServiceResult> CreateTokens(User user) 
     {
-        var (accessTokenId, accessToken) = await _tokenGenerator.GenerateAccessToken(user);
+        var (_, accessToken) = await _tokenGenerator.GenerateAccessToken(user);
         var (refreshTokenId, refreshToken) = _tokenGenerator.GenerateRefreshToken();
 
         db.UserTokens.Add(new IdentityUserToken<string>

@@ -25,7 +25,7 @@ public static class AuthExtensions
             ImageUrl = defaultImage,
             Sounds = false,
             Localization = false,
-            Language = 0,
+            Language = LanguageEnum.English,
             PushNotifications = false,
             AppMode = AppModeEnum.Universal,
 

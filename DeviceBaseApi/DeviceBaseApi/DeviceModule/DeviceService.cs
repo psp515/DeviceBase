@@ -63,6 +63,9 @@ public class DeviceService : BaseService, IDeviceService
         if (device.DeviceType.MaximalNumberOfUsers < device.Users.Count)
             return new ServiceResult(false, "Cannot connect new user.");
 
+        if (string.IsNullOrEmpty(device.OwnerId))
+            return new ServiceResult(false, "Device doesn't have a owner.");
+
         if (device.Users.Any(x => x.Id == userId))
             return new ServiceResult(false, "User already connected.");
 
@@ -100,5 +103,73 @@ public class DeviceService : BaseService, IDeviceService
     {
         var user = await db.AppUsers.Include(x => x.Devices).FirstAsync(x => x.Id == guid);
         return user.Devices.Any(x => x.Id == id);
+    }
+
+    public async Task<ServiceResult> ConnectOwner(int deviceId, string userId, string secret)
+    {
+        var device = await db.Devices
+           .Include(x => x.DeviceType)
+           .Include(x => x.Users)
+           .FirstAsync(x => x.Id == deviceId);
+
+        if (device == null)
+            return new ServiceResult(false, "Device not found.");
+
+        if (string.IsNullOrEmpty(device.OwnerId))
+            return new ServiceResult(false, "Device has owner.");
+
+        if (device.DeviceSecret != secret)
+            return new ServiceResult(false, "Invalid secret.");
+
+        var user = await db.Users
+            .Include(x => x.Devices)
+            .FirstAsync(x => x.Id == userId);
+
+        device.OwnerId = userId;
+        user.Devices.Add(device);
+
+        await db.SaveChangesAsync();
+
+        return new ServiceResult(true);
+    }
+
+    public async Task<ServiceResult> DisconnectOwner(int deviceId, string userId)
+    {
+        var device = await db.Devices
+            .Include(x => x.Users)
+            .FirstAsync(x => x.Id == deviceId);
+
+        if (device == null)
+            return new ServiceResult(false, "Device not found.");
+
+        if (device.OwnerId != userId)
+            return new ServiceResult(false, "User is not owner.");
+
+        var user = await db.Users.FirstAsync(x => x.Id == userId);
+
+        device.Users.Clear();
+        device.OwnerId = "";
+
+        await db.SaveChangesAsync();
+
+        return new ServiceResult(true);
+    }
+
+    public async Task<ServiceResult> DeviceConnectionsPolicy(int deviceId, string userId, bool newPolicy)
+    {
+        var device = await db.Devices
+            .Include(x => x.Users)
+            .FirstAsync(x => x.Id == deviceId);
+
+        if (device == null)
+            return new ServiceResult(false, "Device not found.");
+
+        if (device.OwnerId != userId)
+            return new ServiceResult(false, "User is not owner of the device.");
+
+        device.NewConnectionsPermitted = newPolicy;
+        await db.SaveChangesAsync();
+
+        return new ServiceResult(true);
     }
 }

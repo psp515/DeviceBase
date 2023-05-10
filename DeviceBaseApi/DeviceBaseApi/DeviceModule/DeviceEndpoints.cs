@@ -48,21 +48,42 @@ public class DeviceEndpoints : IEndpoints
             .WithName("Update Device")
             .Accepts<DeviceUpdateDTO>("application/json")
             .Produces(204)
-            .Produces<string>(400)
+            .Produces<RestResponse>(400)
             .Produces(401)
             .RequireAuthorization(ApplicationPolicies.UserPolicy);
 
         application.MapPatch("/api/devices/{id:int}/connect", ConnectDevice)
             .WithName("Connect Device")
             .Produces(204)
-            .Produces<string>(400)
+            .Produces<RestResponse>(400)
             .Produces(401)
             .RequireAuthorization(ApplicationPolicies.UserPolicy);
 
         application.MapPatch("/api/devices/{id:int}/disconnect", DisconnectDevice)
             .WithName("Disconnect Device")
             .Produces(204)
-            .Produces<string>(400)
+            .Produces<RestResponse>(400)
+            .Produces(401)
+            .RequireAuthorization(ApplicationPolicies.UserPolicy);
+
+        application.MapPatch("/api/devices/{id:int}/connectowner", ConnectOwner)
+            .WithName("Connect Owner to Device")
+            .Produces(204)
+            .Produces<RestResponse>(400)
+            .Produces(401)
+            .RequireAuthorization(ApplicationPolicies.UserPolicy);
+
+        application.MapPatch("/api/devices/{id:int}/disconnectowner", DisconnectOwner)
+            .WithName("Disconnect Owner from Device")
+            .Produces(204)
+            .Produces<RestResponse>(400)
+            .Produces(401)
+            .RequireAuthorization(ApplicationPolicies.UserPolicy);
+
+        application.MapPatch("/api/devices/{id:int}", ChangeDevicePolicy)
+            .WithName("Change Device Connection Policy")
+            .Produces(204)
+            .Produces<RestResponse>(400)
             .Produces(401)
             .RequireAuthorization(ApplicationPolicies.UserPolicy);
     }
@@ -193,6 +214,47 @@ public class DeviceEndpoints : IEndpoints
     }
 
     [Authorize]
+    private async Task<IResult> ConnectOwner(IDeviceService service,
+                                             IConfiguration configuration,
+                                             [FromHeader(Name = "Authorization")] string bearerToken,
+                                             [FromBody] OwnerConnectionDTO dto,
+                                             int id)
+    {
+
+        var guid = bearerToken.GetValueFromToken(configuration.GetValue<string>("ApiSettings:Secret"));
+
+        if (guid == null)
+            return Results.BadRequest("Invalid token.");
+
+        var connection = await service.ConnectOwner(id, guid, dto.DeviceSecret);
+
+        if (!connection.Success)
+            return Results.BadRequest(new RestResponse(connection.Error));
+
+        return Results.NoContent();
+    }
+
+    [Authorize]
+    private async Task<IResult> DisconnectOwner(IDeviceService service,
+                                             IConfiguration configuration,
+                                             [FromHeader(Name = "Authorization")] string bearerToken,
+                                             int id)
+    {
+
+        var guid = bearerToken.GetValueFromToken(configuration.GetValue<string>("ApiSettings:Secret"));
+
+        if (guid == null)
+            return Results.BadRequest("Invalid token.");
+
+        var connection = await service.DisconnectOwner(id, guid);
+
+        if (!connection.Success)
+            return Results.BadRequest(new RestResponse(connection.Error));
+
+        return Results.NoContent();
+    }
+
+    [Authorize]
     private async Task<IResult> DisconnectDevice(IDeviceService service,
                                                  IConfiguration configuration,
                                                  [FromHeader(Name = "Authorization")] string bearerToken,
@@ -205,6 +267,26 @@ public class DeviceEndpoints : IEndpoints
             return Results.BadRequest("Invalid token.");
 
         var connection = await service.DisconnectDevice(id, guid);
+
+        if (!connection.Success)
+            return Results.BadRequest(new RestResponse(connection.Error));
+
+        return Results.NoContent();
+    }
+
+    private async Task<IResult> ChangeDevicePolicy(IDeviceService service,
+                                                 IConfiguration configuration,
+                                                 [FromHeader(Name = "Authorization")] string bearerToken,
+                                                 [FromBody] ConnectionPolicyDTO dto,
+                                                 int id)
+    {
+
+        var guid = bearerToken.GetValueFromToken(configuration.GetValue<string>("ApiSettings:Secret"));
+
+        if (guid == null)
+            return Results.BadRequest("Invalid token.");
+
+        var connection = await service.DeviceConnectionsPolicy(id, guid, dto.ConnectionEnabled);
 
         if (!connection.Success)
             return Results.BadRequest(new RestResponse(connection.Error));

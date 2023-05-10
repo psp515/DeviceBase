@@ -14,7 +14,6 @@ public class DataContext : IdentityDbContext<User>
     }
 
     public DbSet<User> AppUsers { get; set; }
-
     public DbSet<Device> Devices { get; set; }
     public DbSet<DeviceType> DeviceTypes { get; set; }
 
