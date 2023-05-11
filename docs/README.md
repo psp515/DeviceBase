@@ -13,20 +13,19 @@
 System jest globalny oparty o SQL Server.
 System służy do przechowywania informacji o urządzeniach typu kontroler pasków led / inteligentna żarówka / inteligentna brama.
 
-Każde fizyczne urządzenie ma swój typ, typ zawiera podstawowe informacje wspólne dla wszystkich urządzeń np maksymalna liczba użytkowników która może się podłączyć do urządzenia.
+Każde fizyczne urządzenie ma swój typ, typ zawiera podstawowe informacje wspólne dla wszystkich urządzeń np maksymalna liczba użytkowników która może się podłączyć do urządzenia. Typ jest tak jak model urządzenia, w bazie nie przechowywujemy wszytkich informacji o modelu urzadzenia raczej zakładamy że tutaj administrator może wprowadzic nowy model z innego systemu np. stricte zwiazanego już z zespołem tworzącym nowe modele urządzeń.
 
-System zakłada że informacje o fizycznym urządzeniu są zawsze w bazie danych tzn. są dodawane przy wypuszczaniu urzadzenia z fabryki i dodawane do bazy danych przez administratora.
-Następnie użytwkonik może się do nich połaczyć i edytować wybrane wartośći urządzenia. (Proces podłączania do bazy opisany niżej)
+System zakłada że informacje o fizycznym urządzeniu są zawsze w bazie danych tzn. są dodawane przy wypuszczaniu urzadzenia z fabryki i dodawane do bazy danych przez administratora. Następnie użytkownik może się do nich połaczyć i edytować wybrane wartośći urządzenia. (Proces podłączania do bazy opisany niżej)
 
-System zawiera 2 głównych aktorów
+System zawiera 2 głównych aktorów:
 - Zautoryzowanego użytkownika - posiada ograniczone uprawnienia w systemie - nie może wysyłać zapytań na niektóre endpointy np nie może dodawać urządzeń
 - Administratora - może wysyłać zapytanie na każdy endpoint - administrator dba miedzy innymi o dodawnie nowych typów urządzen do bazy oraz fizycznych urządzeń
 
 Endpointy możemy pogrupować:
-- Endpointy Autoryzacji - słózy do logowania / rejestrowania użytkownika bądź odświerzania tokenów użytkownika (autoryzacjia oparta o JWT i OAuth 2)
-- Endpointy Urządzeń - zawiera podstawowe operacji CRUD oraz metody pozwalające na łączenie się z urządzeniami
-- Endpointy Typów Urządzeń - zawiera podstawowe operacje CRUD
-- Endpointy Użytkownika - Pozwala użytkownikowi na modyfikowanie niekórych swoich ustawień oraz pobieranie ich
+- Endpointy Autoryzacji - ma na celu logowanie / rejestrowanie użytkownika bądź odświerzania tokenów użytkownika (autoryzacjia oparta o JWT i OAuth 2)
+- Endpointy Urządzeń - zawiera podstawowe operacji CRUD oraz metody pozwalające na łączenie się z urządzeniami metody te są wywoływane przez aplikacje po połączeniu sie użytkownika z urządzeniem
+- Endpointy Typów Urządzeń - zawiera podstawowe operacje CRUD dla modeli urządzeń
+- Endpointy Użytkownika - Pozwala użytkownikowi na modyfikowanie niekórych swoich ustawień oraz pobieranie ich 
 
 #### Baza danych 
 
