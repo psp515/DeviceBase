@@ -1,7 +1,8 @@
-﻿using DeviceBaseApi.UserModule.DTO;
+﻿using DeviceBaseApi.DeviceModule.DTO;
+using DeviceBaseApi.UserModule.DTO;
 using System.Runtime.ConstrainedExecution;
 
-namespace DeviceBaseApi.UserModule;
+namespace DeviceBaseApi;
 
 public static class UserExtensions
 {
@@ -33,5 +34,10 @@ public static class UserExtensions
             user.Localization,
             user.Edited,
             user.Created);
+    }
+
+    public static ConnectedUsersDTO ToConnectedUserDTO(this User user)
+    {
+        return new ConnectedUsersDTO(user.UserName, user.Id);
     }
 }

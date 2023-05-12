@@ -1,4 +1,5 @@
 ﻿
+using DeviceBaseApi;
 using DeviceBaseApi.DeviceModule;
 using DeviceBaseApi.Models;
 using System.Net.Http.Headers;
@@ -109,6 +110,11 @@ public class TestDeviceService : IDeviceService
         throw new NotImplementedException();
     }
 
+    public Task<bool> DisconnectUser(string guid, int id)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<IEnumerable<Device>> GetAllAsync() => await Task.FromResult(Devices);
 
     public async Task<Device?> GetAsync(int id)
@@ -121,6 +127,11 @@ public class TestDeviceService : IDeviceService
         return await Task.FromResult(item);
     }
 
+    public Task<IEnumerable<User>> GetDeviceUsers(int id)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<IEnumerable<Device>> GetUserItemsAsync(string id)
     {
         List<Device> items = new List<Device>();
@@ -131,6 +142,11 @@ public class TestDeviceService : IDeviceService
                     items.Add(Devices.SingleOrDefault(x => x.Id == deviceId));
 
         return items;
+    }
+
+    public Task<bool> IsDeviceOwner(string guid, int id)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<bool> IsUserConnected(string guid, int id) => await Task.FromResult(Connections.Any(x => x == (guid, id)));

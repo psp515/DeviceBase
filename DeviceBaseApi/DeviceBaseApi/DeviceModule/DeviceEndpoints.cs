@@ -44,6 +44,12 @@ public class DeviceEndpoints : IEndpoints
             .Produces(401)
             .RequireAuthorization(ApplicationPolicies.UserPolicy);
 
+        application.MapGet("/api/devices/{id:int}/users", GetDeviceUsers)
+            .WithName("Get Users Connected to Device")
+            .Produces<RestResponse>(200)
+            .Produces(401)
+            .RequireAuthorization(ApplicationPolicies.UserPolicy);
+
         application.MapPut("/api/devices/{id:int}", UpdateItem)
             .WithName("Update Device")
             .Accepts<DeviceUpdateDTO>("application/json")
@@ -75,6 +81,14 @@ public class DeviceEndpoints : IEndpoints
 
         application.MapPatch("/api/devices/{id:int}/disconnectowner", DisconnectOwner)
             .WithName("Disconnect Owner from Device")
+            .Produces(204)
+            .Produces<RestResponse>(400)
+            .Produces(401)
+            .RequireAuthorization(ApplicationPolicies.UserPolicy);
+
+        application.MapPatch("/api/devices/{id:int}/ownerdisconnectuser", OwnerDisconnectsUser)
+            .WithName("Disconnect User from Device By Owner")
+            .Accepts<DisconnectUserDTO>("application/json")
             .Produces(204)
             .Produces<RestResponse>(400)
             .Produces(401)
@@ -120,7 +134,7 @@ public class DeviceEndpoints : IEndpoints
         var guid = bearerToken.GetValueFromToken(configuration.GetValue<string>("ApiSettings:Secret"));
 
         if (guid == null)
-            return Results.BadRequest("Invalid token.");
+            return Results.BadRequest(new RestResponse("Invalid token."));
 
         var result = await service.GetUserItemsAsync(guid);
 
@@ -144,7 +158,7 @@ public class DeviceEndpoints : IEndpoints
         var guid = bearerToken.GetValueFromToken(configuration.GetValue<string>("ApiSettings:Secret"));
 
         if (guid == null)
-            return Results.BadRequest("Invalid token.");
+            return Results.BadRequest(new RestResponse("Invalid token."));
 
         var userConnected = await service.IsUserConnected(guid, id);
 
@@ -185,7 +199,7 @@ public class DeviceEndpoints : IEndpoints
         var deviceType = await deviceTypeService.GetAsync(request.DeviceTypeId);
 
         if (deviceType == null)
-            return Results.BadRequest("Device type not found.");
+            return Results.BadRequest(new RestResponse("Device type not found."));
 
         var device = request.CreateDevice(deviceType);
         var createdDevice = await deviceService.CreateAsync(device);
@@ -203,7 +217,7 @@ public class DeviceEndpoints : IEndpoints
         var guid = bearerToken.GetValueFromToken(configuration.GetValue<string>("ApiSettings:Secret"));
 
         if (guid == null)
-            return Results.BadRequest("Invalid token.");
+            return Results.BadRequest(new RestResponse("Invalid token."));
 
         var connection = await service.ConnectDevice(id, guid);
 
@@ -224,7 +238,7 @@ public class DeviceEndpoints : IEndpoints
         var guid = bearerToken.GetValueFromToken(configuration.GetValue<string>("ApiSettings:Secret"));
 
         if (guid == null)
-            return Results.BadRequest("Invalid token.");
+            return Results.BadRequest(new RestResponse("Invalid token."));
 
         var connection = await service.ConnectOwner(id, guid, dto.DeviceSecret);
 
@@ -244,7 +258,7 @@ public class DeviceEndpoints : IEndpoints
         var guid = bearerToken.GetValueFromToken(configuration.GetValue<string>("ApiSettings:Secret"));
 
         if (guid == null)
-            return Results.BadRequest("Invalid token.");
+            return Results.BadRequest(new RestResponse("Invalid token."));
 
         var connection = await service.DisconnectOwner(id, guid);
 
@@ -264,7 +278,7 @@ public class DeviceEndpoints : IEndpoints
         var guid = bearerToken.GetValueFromToken(configuration.GetValue<string>("ApiSettings:Secret"));
 
         if (guid == null)
-            return Results.BadRequest("Invalid token.");
+            return Results.BadRequest(new RestResponse("Invalid token."));
 
         var connection = await service.DisconnectDevice(id, guid);
 
@@ -274,6 +288,7 @@ public class DeviceEndpoints : IEndpoints
         return Results.NoContent();
     }
 
+    [Authorize]
     private async Task<IResult> ChangeDevicePolicy(IDeviceService service,
                                                  IConfiguration configuration,
                                                  [FromHeader(Name = "Authorization")] string bearerToken,
@@ -284,7 +299,7 @@ public class DeviceEndpoints : IEndpoints
         var guid = bearerToken.GetValueFromToken(configuration.GetValue<string>("ApiSettings:Secret"));
 
         if (guid == null)
-            return Results.BadRequest("Invalid token.");
+            return Results.BadRequest(new RestResponse("Invalid token."));
 
         var connection = await service.DeviceConnectionsPolicy(id, guid, dto.ConnectionEnabled);
 
@@ -293,4 +308,55 @@ public class DeviceEndpoints : IEndpoints
 
         return Results.NoContent();
     }
+
+    [Authorize]
+    private async Task<IResult> GetDeviceUsers(IDeviceService service,
+                                             IConfiguration configuration,
+                                             [FromHeader(Name = "Authorization")] string bearerToken,
+                                             int id)
+    {
+
+        var guid = bearerToken.GetValueFromToken(configuration.GetValue<string>("ApiSettings:Secret"));
+
+        if (guid == null)
+            return Results.BadRequest(new RestResponse("Invalid token."));
+
+        var isOwner = await service.IsDeviceOwner(guid, id);
+
+        if (!isOwner)
+            return Results.BadRequest(new RestResponse("User is not owner or device not found."));
+
+        var users = await service.GetDeviceUsers(id);
+
+        var dto = users.Select(x => x.ToConnectedUserDTO());
+
+        return Results.Ok(new RestResponse(HttpStatusCode.OK, true, dto));
+    }
+
+    [Authorize]
+    private async Task<IResult> OwnerDisconnectsUser(IDeviceService service,
+                                             IConfiguration configuration,
+                                             [FromHeader(Name = "Authorization")] string bearerToken,
+                                             [FromBody] DisconnectUserDTO dto,
+                                             int id)
+    {
+
+        var guid = bearerToken.GetValueFromToken(configuration.GetValue<string>("ApiSettings:Secret"));
+
+        if (guid == null)
+            return Results.BadRequest(new RestResponse("Invalid token."));
+
+        var isOwner = await service.IsDeviceOwner(guid, id);
+
+        if (!isOwner)
+            return Results.BadRequest(new RestResponse("User is not owner or device not found."));
+
+        var disconnected = await service.DisconnectUser(dto.UserId, id);
+
+        if (!disconnected)
+            return Results.BadRequest(new RestResponse("Something went wrong."));
+
+        return Results.NoContent();
+    }
+
 }

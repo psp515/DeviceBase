@@ -175,4 +175,40 @@ public class DeviceService : BaseService, IDeviceService
 
         return new ServiceResult(true);
     }
+
+    public async Task<bool> IsDeviceOwner(string guid, int id)
+    {
+        var device = await db.Devices.FirstAsync(x => x.Id == id);
+        return device.OwnerId == guid;
+    }
+
+    public async Task<bool> DisconnectUser(string guid, int id)
+    {
+        var device = await db.Devices
+             .Include(x => x.Users)
+             .FirstAsync(x => x.Id == id);
+
+        if (device.OwnerId == guid)
+            return false;
+
+        var user = device.Users.FirstOrDefault(x=> x.Id == guid);
+
+        if (user == null)
+            return false;
+
+        device.Users.Remove(user);
+
+        await db.SaveChangesAsync();
+
+        return true;
+    }
+
+    public async Task<IEnumerable<User>> GetDeviceUsers(int id)
+    {
+        var device = await db.Devices
+            .Include(x => x.Users)
+            .FirstAsync(x => x.Id == id);
+
+        return device.Users;
+    }
 }

@@ -13,4 +13,7 @@ public interface IDeviceService : IGetAllAsync<Device>, IUpdateAsync<Device>, IC
     Task<ServiceResult> ConnectDevice(int deviceId, string userId);
     Task<ServiceResult> DisconnectDevice(int deviceId, string userId);
     Task<bool> IsUserConnected(string guid, int id);
+    Task<bool> IsDeviceOwner(string guid, int id);
+    Task<bool> DisconnectUser(string guid, int id);
+    Task<IEnumerable<User>> GetDeviceUsers(int id);
 }
