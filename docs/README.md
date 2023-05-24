@@ -27,7 +27,7 @@ Endpointy możemy pogrupować:
 - Endpointy Użytkownika - Pozwala użytkownikowi na modyfikowanie niekórych swoich ustawień oraz pobieranie ich 
 
 #### Baza danych 
-Uwaga początkowa każdy model w naszej bazie (oprócz użytkownika) używa ```cs BaseModel ```.
+Uwaga początkowa każdy model w naszej bazie (oprócz użytkownika) używa ``` BaseModel ```.
 
  ```cs 
 public abstract class BaseModel
@@ -91,7 +91,7 @@ Baza danych zawiera wiele tabel, wiele z nich jest generowana na potrzeby wewnę
 Oprócz tego baza zawiera tabele z urządzeniami oraz ich typami oraz tabele przejścia pomiedzy urządzeniami oraz uytkownikami.
 
 ##### Tabele AspNetRoles, AspNetRolesClaims i AspNetUserRoles 
-Zawieraja informacje o dostepnych rolach w systmie i jakie role ma dany użytkownik - rola zapewnia dostęp do konkretnyc akcji w bazie. Poniżej przykład (```cs  .RequireAuthorization ```). 
+Zawieraja informacje o dostepnych rolach w systmie i jakie role ma dany użytkownik - rola zapewnia dostęp do konkretnyc akcji w bazie. Poniżej przykład (```  .RequireAuthorization ```). 
 
 ```cs
         /* Application Admin Policy */
