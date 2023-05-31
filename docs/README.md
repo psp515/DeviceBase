@@ -16,15 +16,15 @@ Każde fizyczne urządzenie ma swój typ, typ zawiera podstawowe informacje wsp�
 System zakłada że informacje o fizycznym urządzeniu są zawsze w bazie danych tzn. są dodawane przy wypuszczaniu urzadzenia z fabryki i dodawane do bazy danych przez administratora. Następnie użytkownik może się do nich połaczyć i edytować wybrane wartośći urządzenia. (Proces podłączania do bazy opisany niżej)
 
 System zawiera 3 głównych aktorów:
-- Niezautoryzowany użytkonik - jedyne akcje jakie może podjąć to rejestracjia bądż logowanie
-- Zautoryzowanego użytkownika - posiada ograniczone uprawnienia w systemie - nie może wysyłać zapytań na niektóre endpointy np nie może dodawać urządzeń - ale może zarządzać swoimi urządzeniami
-- Administratora - może wysyłać zapytanie na każdy endpoint - administrator dba miedzy innymi o dodawnie nowych typów urządzen do bazy oraz fizycznych urządzeń
+- Niezautoryzowany użytkonik - jedyne akcje jakie może podjąć to rejestracja bądż logowanie
+- Zautoryzowanego użytkownika - posiada ograniczone uprawnienia w systemie - nie może wysyłać zapytań na niektóre endpointy, np. nie może dodawać urządzeń - ale może zarządzać swoimi urządzeniami
+- Administratora - może wysyłać zapytanie na każdy endpoint - administrator dba między innymi o dodawanie nowych typów urządzeń do bazy oraz fizycznych urządzeń
 
 Endpointy możemy pogrupować:
-- Endpointy Autoryzacji - ma na celu logowanie / rejestrowanie użytkownika bądź odświerzania tokenów użytkownika (autoryzacjia oparta o JWT i OAuth 2)
-- Endpointy Urządzeń - zawiera podstawowe operacji CRUD oraz metody pozwalające na łączenie się z urządzeniami metody te są wywoływane przez aplikacje po połączeniu sie użytkownika z urządzeniem
-- Endpointy Typów Urządzeń - zawiera podstawowe operacje CRUD dla modeli urządzeń
-- Endpointy Użytkownika - Pozwala użytkownikowi na modyfikowanie niekórych swoich ustawień oraz pobieranie ich 
+- Endpointy Autoryzacji - mają na celu logowanie / rejestrowanie użytkownika bądź odświeżanie tokenów użytkownika (autoryzacja oparta o JWT i OAuth 2)
+- Endpointy Urządzeń - zawierają podstawowe operacje CRUD oraz metody pozwalające na łączenie się z urządzeniami. Metody te są wywoływane przez aplikacje po połączeniu się użytkownika z urządzeniem
+- Endpointy Typów Urządzeń - zawieraję podstawowe operacje CRUD dla modeli urządzeń
+- Endpointy Użytkownika - pozwalają użytkownikowi na modyfikowanie niektórych swoich ustawień oraz pobieranie ich 
 
 #### Baza danych 
 Uwaga początkowa każdy model w naszej bazie (oprócz użytkownika) używa ``` BaseModel ```.
@@ -39,7 +39,7 @@ public abstract class BaseModel
 } 
 ```
 
-Baza danych została stworzona podejscie code-first. Rozpoczynaliśmy więc od stworzenia modelu nastepnie logiki działania endpointu a na końcu tworzyliśmy migracje.
+Baza danych została stworzona z podejściem code-first. Rozpoczynaliśmy więc od stworzenia modelu, nastepnie logiki działania endpointu, a na końcu tworzyliśmy migracje.
 ```cs
   public class Device : BaseModel
 {
@@ -62,7 +62,7 @@ Baza danych została stworzona podejscie code-first. Rozpoczynaliśmy więc od s
     public DateTime Produced { get; set; }
 }
 ```
-Powyrzszy przykładowy model był używany w serwisie np do pobierania urządzeń urzytkownika. 
+Powyższy przykładowy model był używany w serwisie np. do pobierania urządzeń użytkownika. 
 ```cs
  public async Task<IEnumerable<Device>> GetUserItemsAsync(string guid)
     {
@@ -87,11 +87,11 @@ Powyrzszy przykładowy model był używany w serwisie np do pobierania urządze�
 
 
 
-Baza danych zawiera wiele tabel, wiele z nich jest generowana na potrzeby wewnętrze Identity Component który wykorzystywany jest do autoryzacji i autentykacji.
-Oprócz tego baza zawiera tabele z urządzeniami oraz ich typami oraz tabele przejścia pomiedzy urządzeniami oraz uytkownikami.
+Baza danych zawiera wiele tabel; duża część z nich jest generowana dla potrzeb wewnętrznych Identity Component, który wykorzystywany jest do autoryzacji i autentykacji.
+Oprócz tego baza zawiera tabele z urządzeniami i ich typami oraz tabele przejścia pomiędzy urządzeniami oraz użytkownikami.
 
 ##### Tabele AspNetRoles, AspNetRolesClaims i AspNetUserRoles 
-Zawieraja informacje o dostepnych rolach w systmie i jakie role ma dany użytkownik - rola zapewnia dostęp do konkretnyc akcji w bazie. Poniżej przykład (```  .RequireAuthorization ```). 
+Zawierają informacje o dostępnych rolach w systemie i jakie role ma dany użytkownik - rola zapewnia dostęp do konkretnych akcji w bazie. Poniżej przykład (```  .RequireAuthorization ```). 
 
 ```cs
         /* Application Admin Policy */
@@ -112,7 +112,7 @@ Zawieraja informacje o dostepnych rolach w systmie i jakie role ma dany użytkow
 ```
 
 ##### Tabela AspNetUserTokens i AspNetUserLogins 
-Istotne przy logowaniu i odświerzaniu tokenów aby urzytkownik mógł dalej korzystać z aplikacji. Poniżej metoda odpowiadająca za zalogowanie użytkownika.
+Istotne przy logowaniu i odświeżaniu tokenów aby użytkownik mógł dalej korzystać z aplikacji. Poniżej metoda odpowiadająca za zalogowanie użytkownika.
 ```cs
   public async Task<ServiceResult> Login(string email, string password)
     {
@@ -154,9 +154,9 @@ public class User : IdentityUser
 
 ##### DeviceUser i Device
 
-DeviceUser to tabela łaczaca użytkowników oraz urządzenia.
+DeviceUser to tabela łącząca użytkowników oraz urządzenia.
 
-Device to tabela zawierające fizyczne urządzenia które możemy załączać do naszych kont w aplikacji. Łaczenie do urządzenia w przykładach poniżej. Jest to Tabela posiadająca najwiecej endpointów i róznych metod które na niej operują. 
+Device to tabela zawierające fizyczne urządzenia które możemy załączać do naszych kont w aplikacji. Łączenie do urządzenia w przykładach poniżej. Jest to Tabela posiadająca najwięcej endpointów i różnych metod które na niej operują. 
 ```cs
  /* Admin Policies */
 
@@ -248,7 +248,7 @@ Device to tabela zawierające fizyczne urządzenia które możemy załączać do
 
 ##### DeviceType
 
-Jest to tabela zawierająca podstawe infrmacje wspólne dla modeli urządzeń np. mamy kontroler LED SPE-61 i jego podstawową własnością jest to iz maksymalnie 5 użytkowników może wysyłać do niego informacje. Tak jak wspominaliśmy wczesniej zakładamy iż w systemie nie potrzebujemy wszystkich informacji i poprostu te wymagane przez nas są zaimportowane do naszego REST API.
+Jest to tabela zawierająca podstawowe informacje wspólne dla modeli urządzeń np. mamy kontroler LED SPE-61 i jego podstawową własnością jest to, żę maksymalnie 5 użytkowników może wysyłać do niego informacje. Tak jak wspominaliśmy wcześniej, zakładamy, że w systemie nie potrzebujemy wszystkich informacji i po prostu te wymagane przez nas są zaimportowane do naszego REST API.
 ```cs
 public class DeviceType : BaseModel
 {
@@ -260,7 +260,7 @@ public class DeviceType : BaseModel
 }
 ```
 
-#### Przykładowy przypadek użycia - Łaczenie sie do urządzenia przez właściciela (który chwile temu kupił produkt)
+#### Przykładowy przypadek użycia - Łączenie się do urządzenia przez właściciela (który chwilę temu kupił produkt)
 
 Endpoint: 
 ```cs
@@ -317,15 +317,15 @@ Serwis:
     }
 ```
 
-1. Z telefonem z aplikacją jesteśmy w zasiegu bluetooth urządenia.
-2. Aplikacja wykrywa urządzenie i propouje połaczenie sie z nim jako gość / jako jedyny właściciel.
+1. Z telefonem, na który pobraliśmy aplikację jesteśmy w zasiegu bluetooth urządenia.
+2. Aplikacja wykrywa urządzenie i proponuje połaczenie się z nim jako gość / jako jedyny właściciel.
 3. Użytkownik wybiera opcje 2.
-4. Aplikacja pyta o sekretny klucz urządzenia (klucz dostarczony z urządzeniem w pudełku / badz hasło gdzies na urzadzeniu jak np. z routerami jest).
+4. Aplikacja pyta o sekretny klucz urządzenia (klucz dostarczony z urządzeniem w pudełku / hasło gdzieś na urządzeniu jak np. w przypadku routerów informacje takie jak początkowe hasło są dodawane na spodzie).
 5. Użytkownik podaje hasło i oczekuje na połączenie.
-6a. Udane połączenie można korzystać z urządzenia.
-6b. Nieudane połączenie urządzenie posiada własciciela - jezeli kupilismy nowy produkt to powinnismy sie skontakowac z supportem.
+6a. Udane połączenie: można korzystać z urządzenia.
+6b. Nieudane połączenie: urządzenie posiada własciciela - jeżeli kupiliśmy nowy produkt, to powinniśmy się skontakować z supportem.
 
-#### Przykładowy przypadek uzycia 2 - Łaczenie sie do urządzenia przez kolege
+#### Przykładowy przypadek użycia 2 - Łączenie się do urządzenia przez kolegę
 
 Endpoint: 
 
@@ -386,16 +386,16 @@ public async Task<ServiceResult> ConnectDevice(int deviceId, string userId)
     }
 ```
 
-1. Z telefonem z aplikacją jesteśmy w zasiegu bluetooth urządenia.
-2. Aplikacja wykrywa urządzenie i propouje połaczenie sie z nim jako gość / jako jedyny właściciel.
+1. Z telefonem, na który pobraliśmy aplikację jesteśmy w zasiegu bluetooth urządenia.
+2. Aplikacja wykrywa urządzenie i propouje połaczenie się z nim jako gość / jako jedyny właściciel.
 3. Użytkownik wybiera opcje 1.
-4. Aplikacja łączny nas z urządzeniem (nie pyta wlascicela o zgode).
-5a. Udane połączenie można korzystać z urządzenia.
-5b. Właściciel urządzenia zablokował możliwość łącznia do urządzenia.
+4. Aplikacja łączy nas z urządzeniem (nie pyta wlaściciela o zgode).
+5a. Udane połączenie: można korzystać z urządzenia.
+5b. Nieudane połączenie: właściciel urządzenia zablokował możliwość łączenia do urządzenia.
 
-#### Przykładowy przypadek uzycia 3 - Rozłączenie właścicela
+#### Przykładowy przypadek użycia 3 - Rozłączenie właściciela
 
-Przydatne gdy sprzedajemy urzadzenie.
+Przydatne, gdy sprzedajemy urządzenie.
 
 Endpoint: 
 
@@ -447,4 +447,4 @@ Serwis:
 ```
 
 1. W aplikacji klikamy rozłącz z urządzeniem.
-2. Aplikacja rozłącza włascicela oraz rozłącza wszystkich urzytkowników ponieważ urzadzenie nie ma wałściciela.
+2. Aplikacja rozłącza właściciela oraz rozłącza wszystkich użytkowników, ponieważ urządzenie nie ma właściciela. Przed ponownym skorzystaniem z urządzenia konieczne jest dodanie nowego właściciela.
