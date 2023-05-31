@@ -4,6 +4,7 @@
 
 <br/>
   
+  Projekt wykorzystuje technologie .NET WebAPI, Entity Framework i serwer bazodanowy MySQL, pisany za pomocą języka C# 
 </div>
 
 ### Opis Systemu
