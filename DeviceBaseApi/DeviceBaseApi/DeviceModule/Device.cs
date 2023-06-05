@@ -10,6 +10,7 @@ public class Device : BaseModel
     public string Description { get; set; }
 
     public string OwnerId { get; set; }
+
     public string DeviceSecret { get; set; }
 
     public bool NewConnectionsPermitted { get; set; }

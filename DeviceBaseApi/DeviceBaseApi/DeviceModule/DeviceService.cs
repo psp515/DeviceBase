@@ -60,7 +60,7 @@ public class DeviceService : BaseService, IDeviceService
         if (device == null)
             return new ServiceResult(false, "Device not found.");
 
-        if (device.DeviceType.MaximalNumberOfUsers < device.Users.Count)
+        if (device.DeviceType.MaximalNumberOfUsers <= device.Users.Count)
             return new ServiceResult(false, "Cannot connect new user.");
 
         if (string.IsNullOrEmpty(device.OwnerId))
@@ -151,7 +151,7 @@ public class DeviceService : BaseService, IDeviceService
         var user = await db.Users.FirstAsync(x => x.Id == userId);
 
         device.Users.Clear();
-        device.OwnerId = "";
+        device.OwnerId = null;
 
         await db.SaveChangesAsync();
 

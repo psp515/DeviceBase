@@ -2,10 +2,13 @@
   
   <h1> Device Base </h1>
 
-<br/>
-  
-  Projekt wykorzystuje technologie `.NET WebAPI`, `Entity Framework` i serwer bazodanowy `SQL Server`, pisany za pomocą języka `C#` 
+
 </div>
+
+<br/>
+
+Projekt wykorzystuje technologie .NET Web API, Entity Framework (C#) i serwer bazodanowy SQL Server (T-SQL).
+Podejście tworzenia projektu: Code First.
 
 ### Opis Systemu
 
@@ -137,6 +140,8 @@ Istotne przy logowaniu i odświeżaniu tokenów aby użytkownik mógł dalej kor
 
 ##### Tabela AspNetUsers
 Zawiera podstawowe informacje o użytkowniku i te potrzebne do zautoryzowania. Tabela ta zawiera podstawoe pola ```cs IdentityUser``` oraz jest rozbudowana o pola potrzebne dla nas.
+
+Ciekawym aspektem są indeksy które generują się same.
 ```cs
 public class User : IdentityUser
 {
@@ -151,6 +156,47 @@ public class User : IdentityUser
     public DateTime Edited { get; set; }
     public DateTime Created { get; set; }
 }
+```
+```sql
+create table AspNetUsers
+(
+    Id                   nvarchar(450) not null
+        constraint PK_AspNetUsers
+            primary key,
+    AppMode              int           not null,
+    Language             int           not null,
+    ImageUrl             nvarchar(max),
+    Sounds               bit           not null,
+    PushNotifications    bit           not null,
+    Localization         bit           not null,
+    Edited               datetime2     not null,
+    Created              datetime2     not null,
+    UserName             nvarchar(256),
+    NormalizedUserName   nvarchar(256),
+    Email                nvarchar(256),
+    NormalizedEmail      nvarchar(256),
+    EmailConfirmed       bit           not null,
+    PasswordHash         nvarchar(max),
+    SecurityStamp        nvarchar(max),
+    ConcurrencyStamp     nvarchar(max),
+    PhoneNumber          nvarchar(max),
+    PhoneNumberConfirmed bit           not null,
+    TwoFactorEnabled     bit           not null,
+    LockoutEnd           datetimeoffset,
+    LockoutEnabled       bit           not null,
+    AccessFailedCount    int           not null
+)
+go
+
+create index EmailIndex
+    on AspNetUsers (NormalizedEmail)
+go
+
+create unique index UserNameIndex
+    on AspNetUsers (NormalizedUserName)
+    where [NormalizedUserName] IS NOT NULL
+go
+
 ```
 
 ##### DeviceUser i Device
@@ -247,7 +293,58 @@ Device to tabela zawierające fizyczne urządzenia które możemy załączać do
             .RequireAuthorization(ApplicationPolicies.UserPolicy);
 ```
 
-##### DeviceType
+```sql
+create table Devices
+(
+    Id                      int identity
+        constraint PK_Devices
+            primary key,
+    DeviceName              nvarchar(max),
+    DevicePlacing           nvarchar(max),
+    Description             nvarchar(max),
+    OwnerId                 nvarchar(450)
+        constraint FK_Owner
+            references AspNetUsers,
+    DeviceSecret            nvarchar(max),
+    NewConnectionsPermitted bit       not null,
+    DeviceTypeId            int       not null
+        constraint FK_Devices_DeviceTypes_DeviceTypeId
+            references DeviceTypes
+            on delete cascade,
+    MqttUrl                 nvarchar(max),
+    SerialNumber            nvarchar(max),
+    Produced                datetime2 not null,
+    Edited                  datetime2 not null,
+    Created                 datetime2 not null
+)
+go
+
+create index IX_Devices_DeviceTypeId
+    on Devices (DeviceTypeId)
+go
+
+create table DeviceUser
+(
+    DevicesId int           not null
+        constraint FK_DeviceUser_Devices_DevicesId
+            references Devices
+            on delete cascade,
+    UsersId   nvarchar(450) not null collate SQL_Latin1_General_CP1_CI_AS
+        constraint FK_DeviceUser_AspNetUsers_UsersId
+            references AspNetUsers
+            on delete cascade,
+    constraint PK_DeviceUser
+        primary key (DevicesId, UsersId)
+)
+go
+
+create index IX_DeviceUser_UsersId
+    on DeviceUser (UsersId)
+go
+
+```
+
+##### Tabela DeviceType
 
 Jest to tabela zawierająca podstawowe informacje wspólne dla modeli urządzeń np. mamy kontroler LED SPE-61 i jego podstawową własnością jest to, żę maksymalnie 5 użytkowników może wysyłać do niego informacje. Tak jak wspominaliśmy wcześniej, zakładamy, że w systemie nie potrzebujemy wszystkich informacji i po prostu te wymagane przez nas są zaimportowane do naszego REST API.
 ```cs
@@ -261,7 +358,22 @@ public class DeviceType : BaseModel
 }
 ```
 
-#### Przykładowy przypadek użycia - Łączenie się do urządzenia przez właściciela (który chwilę temu kupił produkt)
+```sql
+create table DeviceTypes
+(
+    Id                   int identity
+        constraint PK_DeviceTypes
+            primary key,
+    DefaultName          nvarchar(max) collate SQL_Latin1_General_CP1_CI_AS,
+    EndpointsJson        nvarchar(max) collate SQL_Latin1_General_CP1_CI_AS,
+    MaximalNumberOfUsers int       not null,
+    Edited               datetime2 not null,
+    Created              datetime2 not null
+)
+go
+```
+
+#### Przykładowy przypadek użycia 1 - Łączenie się do urządzenia przez właściciela (który chwilę temu kupił produkt)
 
 Endpoint: 
 ```cs
@@ -325,6 +437,46 @@ Serwis:
 5. Użytkownik podaje hasło i oczekuje na połączenie.
 6a. Udane połączenie: można korzystać z urządzenia.
 6b. Nieudane połączenie: urządzenie posiada własciciela - jeżeli kupiliśmy nowy produkt, to powinniśmy się skontakować z supportem.
+
+Widzimy iż generowane zapytania korzystają z podzapytań ale tak samo z JOIN. Zapytania można by zopytmalizować np. napisać bez używania podzapytań.
+```sql
+SELECT [t].[Id], [t].[Created], [t].[Description], [t].[DeviceName], [t].[DevicePlacing], [t].[DeviceSecret], [t].[DeviceTypeId], [t].[Edited], [t].[MqttUrl], [t].[NewConnectionsPermitted], [t].[OwnerId], [t].[Produced], [t].[SerialNumber], [t].[Id0], [t].[Created0], [t].[DefaultName], [t].[Edited0], [t].[EndpointsJson], [t].[MaximalNumberOfUsers], [t0].[DevicesId], [t0].[UsersId], [t0].[Id], [t0].[AccessFailedCount], [t0].[AppMode], [t0].[ConcurrencyStamp], [t0].[Created], [t0].[Edited], [t0].[Email], [t0].[EmailConfirmed], [t0].[ImageUrl], [t0].[Language], [t0].[Localization], [t0].[LockoutEnabled], [t0].[LockoutEnd], [t0].[NormalizedEmail], [t0].[NormalizedUserName], [t0].[PasswordHash], [t0].[PhoneNumber], [t0].[PhoneNumberConfirmed], [t0].[PushNotifications], [t0].[SecurityStamp], [t0].[Sounds], [t0].[TwoFactorEnabled], [t0].[UserName]
+      FROM (
+          SELECT TOP(1) [d].[Id], [d].[Created], [d].[Description], [d].[DeviceName], [d].[DevicePlacing], [d].[DeviceSecret], [d].[DeviceTypeId], [d].[Edited], [d].[MqttUrl], [d].[NewConnectionsPermitted], [d].[OwnerId], [d].[Produced], [d].[SerialNumber], [d0].[Id] AS [Id0], [d0].[Created] AS [Created0], [d0].[DefaultName], [d0].[Edited] AS [Edited0], [d0].[EndpointsJson], [d0].[MaximalNumberOfUsers]
+          FROM [Devices] AS [d]
+          INNER JOIN [DeviceTypes] AS [d0] ON [d].[DeviceTypeId] = [d0].[Id]
+          WHERE [d].[Id] = @__deviceId_0
+      ) AS [t]
+      LEFT JOIN (
+          SELECT [d1].[DevicesId], [d1].[UsersId], [a].[Id], [a].[AccessFailedCount], [a].[AppMode], [a].[ConcurrencyStamp], [a].[Created], [a].[Edited], [a].[Email], [a].[EmailConfirmed], [a].[ImageUrl], [a].[Language], [a].[Localization], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PushNotifications], [a].[SecurityStamp], [a].[Sounds], [a].[TwoFactorEnabled], [a].[UserName]
+          FROM [DeviceUser] AS [d1]
+          INNER JOIN [AspNetUsers] AS [a] ON [d1].[UsersId] = [a].[Id]
+      ) AS [t0] ON [t].[Id] = [t0].[DevicesId]
+      ORDER BY [t].[Id], [t].[Id0], [t0].[DevicesId], [t0].[UsersId]
+
+
+ SELECT [t].[Id], [t].[AccessFailedCount], [t].[AppMode], [t].[ConcurrencyStamp], [t].[Created], [t].[Edited], [t].[Email], [t].[EmailConfirmed], [t].[ImageUrl], [t].[Language], [t].[Localization], [t].[LockoutEnabled], [t].[LockoutEnd], [t].[NormalizedEmail], [t].[NormalizedUserName], [t].[PasswordHash], [t].[PhoneNumber], [t].[PhoneNumberConfirmed], [t].[PushNotifications], [t].[SecurityStamp], [t].[Sounds], [t].[TwoFactorEnabled], [t].[UserName], [t0].[DevicesId], [t0].[UsersId], [t0].[Id], [t0].[Created], [t0].[Description], [t0].[DeviceName], [t0].[DevicePlacing], [t0].[DeviceSecret], [t0].[DeviceTypeId], [t0].[Edited], [t0].[MqttUrl], [t0].[NewConnectionsPermitted], [t0].[OwnerId], [t0].[Produced], [t0].[SerialNumber]
+      FROM (
+          SELECT TOP(1) [a].[Id], [a].[AccessFailedCount], [a].[AppMode], [a].[ConcurrencyStamp], [a].[Created], [a].[Edited], [a].[Email], [a].[EmailConfirmed], [a].[ImageUrl], [a].[Language], [a].[Localization], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PushNotifications], [a].[SecurityStamp], [a].[Sounds], [a].[TwoFactorEnabled], [a].[UserName]
+          FROM [AspNetUsers] AS [a]
+          WHERE [a].[Id] = @__userId_0
+      ) AS [t]
+      LEFT JOIN (
+          SELECT [d].[DevicesId], [d].[UsersId], [d0].[Id], [d0].[Created], [d0].[Description], [d0].[DeviceName], [d0].[DevicePlacing], [d0].[DeviceSecret], [d0].[DeviceTypeId], [d0].[Edited], [d0].[MqttUrl], [d0].[NewConnectionsPermitted], [d0].[OwnerId], [d0].[Produced], [d0].[SerialNumber]
+          FROM [DeviceUser] AS [d]
+          INNER JOIN [Devices] AS [d0] ON [d].[DevicesId] = [d0].[Id]
+      ) AS [t0] ON [t].[Id] = [t0].[UsersId]
+      ORDER BY [t].[Id], [t0].[DevicesId], [t0].[UsersId]
+
+
+ SET NOCOUNT ON;
+      INSERT INTO [DeviceUser] ([DevicesId], [UsersId])
+      VALUES (@p0, @p1);
+      UPDATE [Devices] SET [OwnerId] = @p2
+      OUTPUT 1
+      WHERE [Id] = @p3;
+
+```
 
 #### Przykładowy przypadek użycia 2 - Łączenie się do urządzenia przez kolegę
 
@@ -394,6 +546,46 @@ public async Task<ServiceResult> ConnectDevice(int deviceId, string userId)
 5a. Udane połączenie: można korzystać z urządzenia.
 5b. Nieudane połączenie: właściciel urządzenia zablokował możliwość łączenia do urządzenia.
 
+
+Dokładnie to samo, widzimy iż generowane zapytania korzystają z podzapytań ale tak samo z JOIN. Zapytania można by zopytmalizować np. napisać bez używania podzapytań. Zapytania dalej bardzo rozbudowane w stosunku do kodu C#.
+
+```sql
+SELECT [t].[Id], [t].[Created], [t].[Description], [t].[DeviceName], [t].[DevicePlacing], [t].[DeviceSecret], [t].[DeviceTypeId], [t].[Edited], [t].[MqttUrl], [t].[NewConnectionsPermitted], [t].[OwnerId], [t].[Produced], [t].[SerialNumber], [t].[Id0], [t].[Created0], [t].[DefaultName], [t].[Edited0], [t].[EndpointsJson], [t].[MaximalNumberOfUsers], [t0].[DevicesId], [t0].[UsersId], [t0].[Id], [t0].[AccessFailedCount], [t0].[AppMode], [t0].[ConcurrencyStamp], [t0].[Created], [t0].[Edited], [t0].[Email], [t0].[EmailConfirmed], [t0].[ImageUrl], [t0].[Language], [t0].[Localization], [t0].[LockoutEnabled], [t0].[LockoutEnd], [t0].[NormalizedEmail], [t0].[NormalizedUserName], [t0].[PasswordHash], [t0].[PhoneNumber], [t0].[PhoneNumberConfirmed], [t0].[PushNotifications], [t0].[SecurityStamp], [t0].[Sounds], [t0].[TwoFactorEnabled], [t0].[UserName]
+      FROM (
+          SELECT TOP(1) [d].[Id], [d].[Created], [d].[Description], [d].[DeviceName], [d].[DevicePlacing], [d].[DeviceSecret], [d].[DeviceTypeId], [d].[Edited], [d].[MqttUrl], [d].[NewConnectionsPermitted], [d].[OwnerId], [d].[Produced], [d].[SerialNumber], [d0].[Id] AS [Id0], [d0].[Created] AS [Created0], [d0].[DefaultName], [d0].[Edited] AS [Edited0], [d0].[EndpointsJson], [d0].[MaximalNumberOfUsers]
+          FROM [Devices] AS [d]
+          INNER JOIN [DeviceTypes] AS [d0] ON [d].[DeviceTypeId] = [d0].[Id]
+          WHERE [d].[Id] = @__deviceId_0
+      ) AS [t]
+      LEFT JOIN (
+          SELECT [d1].[DevicesId], [d1].[UsersId], [a].[Id], [a].[AccessFailedCount], [a].[AppMode], [a].[ConcurrencyStamp], [a].[Created], [a].[Edited], [a].[Email], [a].[EmailConfirmed], [a].[ImageUrl], [a].[Language], [a].[Localization], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PushNotifications], [a].[SecurityStamp], [a].[Sounds], [a].[TwoFactorEnabled], [a].[UserName]
+          FROM [DeviceUser] AS [d1]
+          INNER JOIN [AspNetUsers] AS [a] ON [d1].[UsersId] = [a].[Id]
+      ) AS [t0] ON [t].[Id] = [t0].[DevicesId]
+      ORDER BY [t].[Id], [t].[Id0], [t0].[DevicesId], [t0].[UsersId]
+
+
+SELECT [t].[Id], [t].[AccessFailedCount], [t].[AppMode], [t].[ConcurrencyStamp], [t].[Created], [t].[Edited], [t].[Email], [t].[EmailConfirmed], [t].[ImageUrl], [t].[Language], [t].[Localization], [t].[LockoutEnabled], [t].[LockoutEnd], [t].[NormalizedEmail], [t].[NormalizedUserName], [t].[PasswordHash], [t].[PhoneNumber], [t].[PhoneNumberConfirmed], [t].[PushNotifications], [t].[SecurityStamp], [t].[Sounds], [t].[TwoFactorEnabled], [t].[UserName], [t0].[DevicesId], [t0].[UsersId], [t0].[Id], [t0].[Created], [t0].[Description], [t0].[DeviceName], [t0].[DevicePlacing], [t0].[DeviceSecret], [t0].[DeviceTypeId], [t0].[Edited], [t0].[MqttUrl], [t0].[NewConnectionsPermitted], [t0].[OwnerId], [t0].[Produced], [t0].[SerialNumber]
+      FROM (
+          SELECT TOP(1) [a].[Id], [a].[AccessFailedCount], [a].[AppMode], [a].[ConcurrencyStamp], [a].[Created], [a].[Edited], [a].[Email], [a].[EmailConfirmed], [a].[ImageUrl], [a].[Language], [a].[Localization], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PushNotifications], [a].[SecurityStamp], [a].[Sounds], [a].[TwoFactorEnabled], [a].[UserName]
+          FROM [AspNetUsers] AS [a]
+          WHERE [a].[Id] = @__userId_0
+      ) AS [t]
+      LEFT JOIN (
+          SELECT [d].[DevicesId], [d].[UsersId], [d0].[Id], [d0].[Created], [d0].[Description], [d0].[DeviceName], [d0].[DevicePlacing], [d0].[DeviceSecret], [d0].[DeviceTypeId], [d0].[Edited], [d0].[MqttUrl], [d0].[NewConnectionsPermitted], [d0].[OwnerId], [d0].[Produced], [d0].[SerialNumber]
+          FROM [DeviceUser] AS [d]
+          INNER JOIN [Devices] AS [d0] ON [d].[DevicesId] = [d0].[Id]
+      ) AS [t0] ON [t].[Id] = [t0].[UsersId]
+      ORDER BY [t].[Id], [t0].[DevicesId], [t0].[UsersId]
+
+
+SET IMPLICIT_TRANSACTIONS OFF;
+      SET NOCOUNT ON;
+      INSERT INTO [DeviceUser] ([DevicesId], [UsersId])
+      VALUES (@p0, @p1);
+
+```
+
 #### Przykładowy przypadek użycia 3 - Rozłączenie właściciela
 
 Przydatne, gdy sprzedajemy urządzenie.
@@ -449,3 +641,19 @@ Serwis:
 
 1. W aplikacji klikamy rozłącz z urządzeniem.
 2. Aplikacja rozłącza właściciela oraz rozłącza wszystkich użytkowników, ponieważ urządzenie nie ma właściciela. Przed ponownym skorzystaniem z urządzenia konieczne jest dodanie nowego właściciela.
+
+Kody sql dalej duze i rozbudowane (nie zostały wklejone bo to jest praktycznie powtórzenie 3 raz czegoś bardzo podobnego). Jedyną różnica sa tutaj linie odpowiadajace za usuwanie połączeń w bazie danych, to również można by zoptymalizować usuwając po prostu wszystkie pole gdzie mamy odpowiedni id urządzenia.
+
+```sql
+
+      SET NOCOUNT ON;
+      DELETE FROM [DeviceUser]
+      OUTPUT 1
+      WHERE [DevicesId] = @p0 AND [UsersId] = @p1;
+      DELETE FROM [DeviceUser]
+      OUTPUT 1
+      WHERE [DevicesId] = @p2 AND [UsersId] = @p3;
+      UPDATE [Devices] SET [OwnerId] = @p4
+      OUTPUT 1
+      WHERE [Id] = @p5;
+```
