@@ -94,6 +94,9 @@ public class DeviceService : BaseService, IDeviceService
         if (!device.Users.Any(x => x.Id == userId))
             return new ServiceResult(false, "User not connected.");
 
+        if (device.OwnerId == userId)
+            return new ServiceResult(false, "User is owner cannot disconnect with this method.");
+
         var user = await db.Users.FirstAsync(x => x.Id == userId);
 
         device.Users.Remove(user);
